@@ -1,16 +1,46 @@
-# This is a sample Python script.
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from ReadFile import RDEdata
+from RDE_Plot import RDE_Plotter
+import matplotlib.pyplot as plt
+import numpy as np
+
+def read_rde_data(path_loc):
+    d = RDEdata(path=path_loc)
+
+    return d.read_data()
+
+def plot(data):
+
+    plot = RDE_Plotter()
+
+    plot.plot_raw_data(raw_data=data)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+
+    p = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\RDE_data'
+
+
+    raw_data=read_rde_data(path_loc =p)
+    #plot(data=raw_data)
+
+    def onpick(event):
+        ind = event.ind
+
+        print('onpick3 scatter:', ind, np.take(data['Time'], ind), np.take(data['Current [nA]'], ind))
+
+    data = raw_data
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    col = ax1.scatter(data['Time'], data['Current [nA]'], picker=True)
+    # fig.savefig('pscoll.eps')
+    fig.canvas.mpl_connect('pick_event', onpick)
+
+
+    #fig.canvas.mpl_connect('pick_event', onpick())
+    plt.show()
+
+
 
 
