@@ -11,9 +11,22 @@ def read_rde_data(path_loc):
 
 def plot(data):
 
-    plot = RDE_Plotter()
+    l = ['20', '40', '60', '80', '100', '120']
 
-    plot.plot_raw_data(raw_data=data)
+    plot = RDE_Plotter(raw_data=data,concentrations=l)
+
+    plot.plot_raw_data()
+    plot.print_list()
+    calib_data = plot.num_to_conc()
+    df = plot.dict_to_df(data_selection=calib_data)
+
+    plot.plot_calibration_data(data_selection=df)
+    df = plot.calibration_mean(data_selection=df)
+    plot.regression(data=df)
+    plot.plot_raw_start()
+    plot.data_start()
+    plot.plot_truncated()
+
 
 
 
@@ -23,22 +36,8 @@ if __name__ == '__main__':
 
 
     raw_data=read_rde_data(path_loc =p)
-    #plot(data=raw_data)
+    plot(data=raw_data)
 
-    def onpick(event):
-        ind = event.ind
-
-        print('onpick3 scatter:', ind, np.take(data['Time'], ind), np.take(data['Current [nA]'], ind))
-
-    data = raw_data
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    col = ax1.scatter(data['Time'], data['Current [nA]'], picker=True)
-    # fig.savefig('pscoll.eps')
-    fig.canvas.mpl_connect('pick_event', onpick)
-
-
-    #fig.canvas.mpl_connect('pick_event', onpick())
     plt.show()
 
 
