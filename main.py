@@ -3,6 +3,7 @@ from ReadFile import RDEdata
 from RDE_Plot import RDE_Plotter
 import matplotlib.pyplot as plt
 import numpy as np
+from GUI import App
 
 def read_rde_data(path_loc):
     d = RDEdata(path=path_loc)
@@ -32,13 +33,17 @@ def plot(data):
 
 if __name__ == '__main__':
 
-    p = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\RDE_data'
+    app = App()
+
+    app.mainloop()
+
+    #p = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\RDE_data'
 
 
-    raw_data=read_rde_data(path_loc =p)
-    plot(data=raw_data)
+    #raw_data=read_rde_data(path_loc =p)
+    #plot(data=raw_data)
 
-    plt.show()
+    #plt.show()
 
 
 
