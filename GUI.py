@@ -85,4 +85,7 @@ class App(tk.Tk):
         Exp_Info = ExperimentInfo(self)
         Exp_Info.grid(column=0, row=0, columnspan=3, sticky=tk.EW)
 
+        Calib = Calibration(self)
+        Calib.grid(column=0, row=1, columnspan=3, sticky=tk.EW)
+
 

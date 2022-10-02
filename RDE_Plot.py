@@ -115,6 +115,7 @@ class RDE_Plotter:
 
         plt.scatter(x, y, color='red')
         plt.plot(x, ypred)
+        plt.show()
         print(f'Slope:{lr.coef_} and intercept:{lr.intercept_}')
 
         return (lr.coef_, lr.intercept_)
