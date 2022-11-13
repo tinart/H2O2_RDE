@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from ReadFile import RDEdata
+from src.files import ReadData
 import pandas as pd
 
 
@@ -23,7 +23,7 @@ def test_file_name(tmp_path):
     p.write_text('Hello')
 
 
-    test_data = RDEdata(path=d).file_name()
+    test_data = ReadData(path=d).get_filename()
     assert test_data == 'test.txt'
 
 def test_read_data(tmp_path, mocker):
@@ -34,7 +34,7 @@ def test_read_data(tmp_path, mocker):
 
     mocker.patch('ReadFile.RDEdata.read_data', return_value = ret_func())
 
-    assert type(RDEdata(path=d).read_data()) == pd.DataFrame
+    assert type(ReadData(path=d).read_data()) == pd.DataFrame
 
 
 

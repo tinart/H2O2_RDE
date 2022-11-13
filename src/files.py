@@ -4,13 +4,13 @@ import os
 import matplotlib.pyplot as plt
 
 
-class RDEdata:
+class ReadData:
 
     def __init__(self, path:str):
 
         self.path = path
 
-    def file_name(self):
+    def get_filename(self):
 
         for file in os.listdir(self.path):
             if file.endswith('.txt'):
@@ -27,17 +27,22 @@ class RDEdata:
 
                 return data
 
-    def headers(self) -> list:
+    def get_header(self) -> list:
 
         data = self.read_data()
         return list(data.columns)
 
-    def raw_dataframe(self) -> pd.DataFrame:
+    def get_dataframe(self) -> pd.DataFrame:
 
         data = self.read_data()
-        col1, col2 = self.headers()
+        col1, col2 = self.get_header()
 
         return pd.DataFrame({col1:data[col1], col2:data[col2]})
+
+    def drop_nan_dataframe(self):
+
+        df = self.get_dataframe()
+        return df.dropna()
 
 
 

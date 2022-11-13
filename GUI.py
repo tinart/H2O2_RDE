@@ -64,6 +64,10 @@ class Calibration(ttk.LabelFrame):
         CLI().show_calibration_plot()
 
 
+    def pick_data_start(self):
+        pass
+
+
 
 
 

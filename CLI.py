@@ -1,6 +1,5 @@
-from typing import Protocol
 import pandas as pd
-from ReadFile import RDEdata
+from src.files import ReadData
 from RDE_Plot import RDE_Plotter
 
 
@@ -10,7 +9,7 @@ class CLI:
         self.df = pd.DataFrame()
 
     def read_rde_data(self, file_location) -> pd.DataFrame:
-        d = RDEdata(path=file_location)
+        d = ReadData(path=file_location)
 
         return d.read_data()
 
@@ -26,13 +25,18 @@ class CLI:
         df = plot.dict_to_df(data_selection=calib_data)
         plot.plot_calibration_data(data_selection=df)
 
-    @staticmethod
-    def show_calibration_plot():
+        return plot, df
+
+
+    def show_calibration_plot(self):
+
+
         df_mean = plot.calibration_mean(data_selection=df)
         plot.regression(data=df_mean)
 
-    def pick_data_points(self, ) -> None:
-        raise NotImplementedError()
+    def pick_data_start(self, ):
+        pass
+
 
     def print_data_point_list(self) -> None:
         raise NotImplementedError()
