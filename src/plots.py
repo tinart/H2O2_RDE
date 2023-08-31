@@ -28,7 +28,8 @@ class BaseLineCorrection:
     def __init__(self, df):
         self.df = df
         self.baseline = {}
-        self.n = 1
+        self.x = []
+        self.y = []
     @property
     def get_colnames(self) -> list:
         return [col for col in self.df.columns]
@@ -41,8 +42,9 @@ class BaseLineCorrection:
         y = np.take(self.df[column_names[1]], ind)
 
 
-        self.baseline[f'{self.n}'] = {'x': x, 'y': y}
-        self.n += 1
+
+        self.x.extend(x)
+        self.y.extend(y)
 
     def pick_baseline_points(self):
         col_names = self.get_colnames
@@ -56,6 +58,7 @@ class BaseLineCorrection:
         plt.show()
 
     def baseline_data(self) -> list:
+        self.baseline['Values'] = {'x':self.x,'y':self.y}
         return self.baseline
 
 

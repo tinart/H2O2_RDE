@@ -7,11 +7,9 @@ import matplotlib.pyplot as plt
 def baseline_regression(data):
 
 
-    print(data)
-
     lr = LinearRegression()
-    x = np.array(data['baseline values']['x']).reshape(-1,1)
-    y = np.array(data['baseline values']['y']).reshape(-1,1)
+    x = np.array(data['Values']['x']).reshape(-1,1)
+    y = np.array(data['Values']['y']).reshape(-1,1)
 
     lr.fit(x, y)
     ypred = lr.predict(x)
@@ -30,7 +28,7 @@ def baseline_correction_function(data,bsl_coefficient):
     for index, row in data.iterrows():
 
 
-        corrected_y = row['WE(1).Current (A)'] - (row['Time (s)'] * bsl_coefficient)
+        corrected_y = row['WE(1).Current (A)'] - row['Time (s)'] * bsl_coefficient
         corrected_current_value.append(corrected_y)
     corrected_dataframe = pd.DataFrame({'Time (s)':data['Time (s)'],'Corrected Current (A)':corrected_current_value})
     return corrected_dataframe
