@@ -23,6 +23,41 @@ class RawPlot:
         plt.ylabel(col_names[1])
         plt.show()
 
+class BaseLineCorrection:
+
+    def __init__(self, df):
+        self.df = df
+        self.baseline = {}
+        self.n = 1
+    @property
+    def get_colnames(self) -> list:
+        return [col for col in self.df.columns]
+
+    def baseline_correction_picker(self, event) -> None:
+        column_names = self.get_colnames
+        ind = event.ind
+
+        x = np.take(self.df[column_names[0]], ind)
+        y = np.take(self.df[column_names[1]], ind)
+
+
+        self.baseline[f'{self.n}'] = {'x': x, 'y': y}
+        self.n += 1
+
+    def pick_baseline_points(self):
+        col_names = self.get_colnames
+
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
+
+        fig.canvas.mpl_connect('pick_event', self.baseline_correction_picker)
+
+        plt.show()
+
+    def baseline_data(self) -> list:
+        return self.baseline
+
 
 class CalibrationPlot:
 

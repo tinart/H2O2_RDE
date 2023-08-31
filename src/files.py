@@ -20,9 +20,9 @@ class ReadData:
 
         for file in os.listdir(self.path):
 
-            if file.endswith('.txt'):
+            if file.endswith('.csv'):
                 with open(f'{self.path}\{file}', 'r') as rde_txtfile:
-                    data = pd.read_csv(rde_txtfile,delimiter='\t')
+                    data = pd.read_csv(rde_txtfile,delimiter=',')
 
 
                 return data
@@ -35,7 +35,7 @@ class ReadData:
     def get_dataframe(self) -> pd.DataFrame:
 
         data = self.read_data()
-        col1, col2 = self.get_header()
+        col1, col2, col3, col4 = self.get_header()
 
         return pd.DataFrame({col1:data[col1], col2:data[col2]})
 

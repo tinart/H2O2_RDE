@@ -4,6 +4,43 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def baseline_regression(data):
+
+
+    print(data)
+
+    lr = LinearRegression()
+    x = np.array(data['baseline values']['x']).reshape(-1,1)
+    y = np.array(data['baseline values']['y']).reshape(-1,1)
+
+    lr.fit(x, y)
+    ypred = lr.predict(x)
+
+    plt.scatter(x, y, color='red')
+    plt.plot(x, ypred)
+    plt.show()
+
+
+    return lr.coef_
+
+def baseline_correction_function(data,bsl_coefficient):
+
+    corrected_current_value = []
+
+    for index, row in data.iterrows():
+
+
+        corrected_y = row['WE(1).Current (A)'] - (row['Time (s)'] * bsl_coefficient)
+        corrected_current_value.append(corrected_y)
+    corrected_dataframe = pd.DataFrame({'Time (s)':data['Time (s)'],'Corrected Current (A)':corrected_current_value})
+    return corrected_dataframe
+
+
+
+
+
+
+
 def calibration_mean(data_selection) -> pd.DataFrame:
     data = data_selection
     data['Concentration'] = pd.to_numeric(data['Concentration'])
@@ -36,8 +73,9 @@ def signal_to_concentration(regression_parameters,truncated_data):
     a, b = regression_parameters
     col_names = [col for col in truncated_data.columns]
 
-    h2o2_y = [(i * a + b) for i in truncated_data[col_names[1]]]
+    h2o2_y = [float(i * a + b) for i in truncated_data[col_names[1]]]
 
-    print(np.array(h2o2_y)[0])
 
-    #plt.plot(truncated_data[col_names[0]], h2o2_y)
+
+    plt.plot(truncated_data[col_names[0]], h2o2_y)
+    plt.show()
