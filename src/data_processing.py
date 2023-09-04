@@ -19,6 +19,7 @@ class RawPlot:
             data[col_names[0]],
             data[col_names[1]]
         )
+        plt.title('Raw Data')
         plt.xlabel(col_names[0])
         plt.ylabel(col_names[1])
         plt.show()
@@ -54,6 +55,7 @@ class BaseLineCorrection:
         col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.baseline_correction_picker)
+        plt.title('Select baseline values')
 
         plt.show()
 
@@ -68,7 +70,7 @@ class CalibrationPlot:
         self.df = df
         self.n = 1
         self.raw_data_list = {}
-        self.concentrations = ['20','40','60','80','100','120']
+        self.concentrations = ['0','20','40','60','80','100']
 
     @property
     def get_colnames(self) -> list:
@@ -109,6 +111,7 @@ class CalibrationPlot:
 
             df1 = pd.DataFrame({'Concentration': n, 'Time': x, 'Signal': y})
             df = pd.concat([df, df1], ignore_index=True)
+
         return df
 
     def plot_picked_points(self):
@@ -170,11 +173,10 @@ class PlotDataStart:
         plt.plot(x[start:], y[start:])
         plt.show()
 
-        df = pd.DataFrame({'x':x,'y':y})
+        df = pd.DataFrame({'x':x[start:],'y':y[start:]})
         return df
 
 
 
 
-class CalibratedDataPlot:
-    pass
+
