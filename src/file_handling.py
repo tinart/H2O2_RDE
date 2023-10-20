@@ -25,9 +25,6 @@ class ReadData:
 
         for file in os.listdir(self.path):
 
-
-
-
             if file.endswith('.csv'):
                     print(file)
 

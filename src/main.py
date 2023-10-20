@@ -17,15 +17,20 @@ from openpyxl.styles import Alignment
 
 
 
-def read_files(file_path):
+data_reader = None
 
-    data_reader = ReadData(path=file_path)
+def read_files(file_path):
+    global data_reader
+    if data_reader is None:
+        data_reader = ReadData(path=file_path)
     data_reader.create_new_folder()
     cleaned_data = data_reader.drop_nan_dataframe()
     return cleaned_data
 
 def get_file_name(file_path):
-    data_reader = ReadData(path=file_path)
+    global data_reader
+    if data_reader is None:
+        data_reader = ReadData(path=file_path)
     file = data_reader.get_filename()
     return file
 
@@ -168,32 +173,22 @@ def seaborn_plot(dataframe):
     plt.show()
 
 def analyze(data_path):
-
-    data_file = ReadData(data_path).count_files()
+    data_reader = ReadData(data_path)
+    total_files = data_reader.count_files()
     output_filename = 'data.xlsx'
-
     analyzed_data_dictionary = {}
 
-    while data_file != 0:
+    for _ in range(total_files):
         data_frame = read_files(file_path=data_path)
-        x,y = process_and_plot(data_frame)
+        x, y = process_and_plot(data_frame)
         file = get_file_name(data_path)
-        print(x.iloc[0])
-        analyzed_data_dictionary[file] = {'Time (s)': x-x.iloc[0], '[H2O2]': y}
+        analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
         data_export_handling(file_path=data_path)
-        data_file -= 1
-
-
 
     exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)
-    export_dataframe_to_excel(exported_data,output_filename,data_path)
+    export_dataframe_to_excel(exported_data, output_filename, data_path)
     seaborn_plot(exported_data)
 
-
-
-
-
 if __name__ == '__main__':
-    data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\231014_NcAA9C_No_Substrate_Buffer\Test'
-
+    data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\b\Selection'
     analyze(data_path)
