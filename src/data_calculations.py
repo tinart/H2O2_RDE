@@ -1,7 +1,7 @@
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 def baseline_regression(data,raw_data):
@@ -13,14 +13,7 @@ def baseline_regression(data,raw_data):
 
     lr.fit(x, y)
     ypred = lr.predict(x)
-    #plt.scatter(data[0])
-    plt.scatter(raw_data['Time (s)'],raw_data['WE(1).Current (A)'])
-    plt.scatter(x, y, color='red')
-    plt.plot(x, ypred)
-    plt.show()
-
-
-    return lr.coef_
+    return lr.coef_,ypred
 
 def baseline_correction_function(data,bsl_coefficient):
 
@@ -63,23 +56,16 @@ def calibration_regression(data):
     lr.fit(x, y)
     ypred = lr.predict(x)
 
-    plt.scatter(x, y, color='red')
-    plt.plot(x, ypred)
-    plt.title('Calibration Plot')
-    plt.show()
-    print(f'Slope:{lr.coef_} and intercept:{lr.intercept_}')
 
-    return lr.coef_, lr.intercept_
+    return lr.coef_, lr.intercept_,ypred
 
 
 def signal_to_concentration(regression_parameters,truncated_data):
 
-    a, b = regression_parameters
+    a, b, ypred = regression_parameters
     col_names = [col for col in truncated_data.columns]
 
     h2o2_y = [float((i -b) / a) for i in truncated_data[col_names[1]]]
 
 
-
-    plt.plot(truncated_data[col_names[0]], h2o2_y)
-    plt.show()
+    return truncated_data[col_names[0]], h2o2_y
