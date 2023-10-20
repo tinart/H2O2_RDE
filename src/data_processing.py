@@ -71,7 +71,7 @@ class BaseLineCorrection:
 
         data = self.baseline_data()
 
-        bsl_coeff, ypred = baseline_regression(data,self.df)
+        bsl_coeff, _, ypred = baseline_regression(data,self.df)
 
         x = np.array(data['Values']['x']).reshape(-1, 1)
         y = np.array(data['Values']['y']).reshape(-1, 1)

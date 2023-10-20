@@ -70,7 +70,7 @@ def process_and_plot(data_frame):
     baseline_correction.pick_baseline_points()
     baseline_data = baseline_correction.baseline_data()
 
-    baseline_coefficient, ypred = baseline_regression(baseline_data, data_frame)
+    baseline_coefficient, _, ypred = baseline_regression(baseline_data, data_frame)
     bsl_data = baseline_correction_function(data_frame,baseline_coefficient)
     baseline_correction.plot_regression_baseline()
 
