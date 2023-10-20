@@ -24,6 +24,7 @@ class ReadData:
     def get_filename(self):
 
         for file in os.listdir(self.path):
+            print(file)
             if file.endswith('.txt'):
                 return file
 
