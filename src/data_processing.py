@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from data_calculations import calibration_regression, signal_to_concentration,\
+    baseline_regression, baseline_correction_function, calibration_mean
+
 
 class RawPlot:
 
@@ -31,6 +34,7 @@ class BaseLineCorrection:
         self.baseline = {}
         self.x = []
         self.y = []
+
     @property
     def get_colnames(self) -> list:
         return [col for col in self.df.columns]
@@ -62,6 +66,24 @@ class BaseLineCorrection:
     def baseline_data(self) -> list:
         self.baseline['Values'] = {'x':self.x,'y':self.y}
         return self.baseline
+
+    def plot_regression_baseline(self):
+
+        data = self.baseline_data()
+
+        bsl_coeff, ypred = baseline_regression(data,self.df)
+
+        x = np.array(data['Values']['x']).reshape(-1, 1)
+        y = np.array(data['Values']['y']).reshape(-1, 1)
+
+
+        plt.scatter(self.df['Time (s)'],self.df['WE(1).Current (A)'])
+        plt.scatter(x, y, color='red')
+        plt.plot(x, ypred)
+        plt.title('Selected baseline regression')
+        plt.show()
+
+
 
 
 class CalibrationPlot:
@@ -95,6 +117,7 @@ class CalibrationPlot:
         col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.calibration_picker)
+        plt.title('Pick claibration data plateus')
 
         plt.show()
 
@@ -121,9 +144,36 @@ class CalibrationPlot:
         plt.scatter(self.df[col_names[0]], self.df[col_names[1]], s=3)
 
         plt.scatter(data['Time'],data['Signal'], s=5, color='red')
+        plt.title('Picked calibration points')
         plt.show()
 
         return data
+
+    def plot_calibration_regression(self,reg_params):
+
+        data = self.plot_picked_points()
+        coef, intercept, ypred = reg_params
+        calib_mean = calibration_mean(data_selection=data)
+
+
+        x = np.array(calib_mean['Concentration Mean']).reshape((-1, 1))
+        y = np.array(calib_mean['Signal Mean']).reshape((-1, 1))
+
+
+        plt.scatter(x, y, color='red')
+        plt.plot(x, ypred)
+        plt.title('Calibration Plot')
+        plt.show()
+        print(f'Slope:{coef} and intercept:{intercept}')
+
+    def plot_signal_to_concentration(self,x,y):
+
+
+        plt.plot(x,y)
+        plt.show()
+
+
+
 
 
 class PlotDataStart:
@@ -153,6 +203,7 @@ class PlotDataStart:
         col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.data_start_picker)
+        plt.title('Zoom inn and pick one start point')
 
         plt.show()
 
