@@ -24,7 +24,7 @@ class ReadData:
     def get_filename(self):
 
         for file in os.listdir(self.path):
-            if file.endswith('.txt'):
+            if file.endswith('.csv'):
                 return file
 
     def read_data(self) -> pd.DataFrame:
@@ -47,13 +47,14 @@ class ReadData:
     def get_dataframe(self) -> pd.DataFrame:
 
         file,data = self.read_data()
-        col1, col2, col3, col4 = self.get_header()
+        col1, col2 = self.get_header()
 
         return pd.DataFrame({col1:data[col1], col2:data[col2]})
 
     def drop_nan_dataframe(self):
 
         df = self.get_dataframe()
+        print(df)
         closest_index = (df['Time (s)'] - 2).abs().idxmin()
 
         truncated_dataframe = pd.DataFrame({'Time (s)':df['Time (s)'][closest_index:], 'WE(1).Current (A)':df['WE(1).Current (A)'][closest_index:]})
