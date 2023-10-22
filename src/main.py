@@ -36,23 +36,78 @@ def get_file_name(file_path):
 
 class DataProcessing:
 
-    def __init__(self):
-        pass
+    def __init__(self, data_frame, file_path):
+        self.data_frame = data_frame
+        self.file_path = file_path
+        self.bsl_data = None
+        self.truncated_data = None
+        self.calibrated_data = None
+        self.regression_parameters = None
+        self.analyzed_x = None
+        self.analyzed_y = None
 
     def raw_plotter(self):
-        raise NotImplementedError
+
+
+            raw_plotter = RawPlot(self.data_frame)
+            raw_plotter.plot_raw_data()
+
+            print(f'File handling error , check if dir is empty.')
+
+
 
     def baseline_correction(self):
-        raise NotImplementedError
+
+
+        try:
+            baseline_correction = BaseLineCorrection(self.data_frame)
+            baseline_correction.pick_baseline_points()
+            baseline_data = baseline_correction.baseline_data()
+
+            baseline_coefficient, _, ypred = baseline_regression(baseline_data, self.data_frame)
+            self.bsl_data = baseline_correction_function(self.data_frame, baseline_coefficient)
+            baseline_correction.plot_regression_baseline()
+
+
+
+        except:
+            pass
+
+
 
     def calibration(self):
-        raise NotImplementedError
+
+
+            calib_plotter = CalibrationPlot(self.bsl_data)
+            calib_plotter.pick_calibration_points()
+            self.calibrated_data = calib_plotter.plot_picked_points()
+            regression_params = calibration_regression(self.calibrated_data)
+            calib_plotter.plot_calibration_regression(reg_params=regression_params)
+            self.regression_parameters = regression_params
+
+
+    def truncated_plotter(self):
+
+        trunc_plotter = PlotDataStart(self.bsl_data)
+        trunc_plotter.pick_start_point()
+        self.truncated_data = trunc_plotter.plot_truncated_data()
+
+
+    def plot_analyzed_data(self):
+
+
+        x, y = signal_to_concentration(regression_parameters=self.regression_parameters, truncated_data=self.truncated_data)
+        calib_plotter = CalibrationPlot(self.bsl_data)
+        calib_plotter.plot_signal_to_concentration(x, y)
+
+        self.analyzed_x = x
+        self.analyzed_y = y
 
     def data_export_handler(self):
-        raise NotImplementedError
 
-    def create_longform_dataframe(self):
-        raise NotImplementedError
+        data_handler = ReadData(path=self.file_path)
+        data_handler.move_file_after_analysis()
+
 
     def export_longform_dataframe(self):
         raise NotImplementedError
@@ -61,37 +116,6 @@ class DataProcessing:
         raise NotImplementedError
 
 
-
-def process_and_plot(data_frame):
-    raw_plotter = RawPlot(data_frame)
-    raw_plotter.plot_raw_data()
-
-    baseline_correction = BaseLineCorrection(data_frame)
-    baseline_correction.pick_baseline_points()
-    baseline_data = baseline_correction.baseline_data()
-
-    baseline_coefficient, _, ypred = baseline_regression(baseline_data, data_frame)
-    bsl_data = baseline_correction_function(data_frame,baseline_coefficient)
-    baseline_correction.plot_regression_baseline()
-
-
-
-    calib_plotter = CalibrationPlot(bsl_data)
-    calib_plotter.pick_calibration_points()
-    calib_dataframe = calib_plotter.plot_picked_points()
-
-
-    trunc_plotter = PlotDataStart(bsl_data)
-    trunc_plotter.pick_start_point()
-    truncated_data = trunc_plotter.plot_truncated_data()
-
-
-    regression_params = calibration_regression(calib_dataframe)
-    calib_plotter.plot_calibration_regression(reg_params=regression_params)
-
-    x, y = signal_to_concentration(regression_parameters=regression_params, truncated_data=truncated_data)
-    calib_plotter.plot_signal_to_concentration(x,y)
-    return x,y
 
 
 
@@ -180,13 +204,22 @@ def analyze(data_path):
 
     for _ in range(total_files):
         data_frame = read_files(file_path=data_path)
-        x, y = process_and_plot(data_frame)
+
+        processor = DataProcessing(data_frame,data_path)
+        processor.raw_plotter()
+        processor.baseline_correction()
+        processor.calibration()
+        processor.truncated_plotter()
+        processor.plot_analyzed_data()
+
+        x = processor.analyzed_x
+        y = processor.analyzed_y
         file = get_file_name(data_path)
         analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
-        data_export_handling(file_path=data_path)
+
 
     exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)
-    export_dataframe_to_excel(exported_data, output_filename, data_path)
+
     seaborn_plot(exported_data)
 
 if __name__ == '__main__':
