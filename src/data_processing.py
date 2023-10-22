@@ -94,6 +94,9 @@ class CalibrationPlot:
         self.raw_data_list = {}
         self.concentrations = ['0','20','40','60','80','100']
 
+
+
+
     @property
     def get_colnames(self) -> list:
         return [col for col in self.df.columns]
@@ -125,8 +128,12 @@ class CalibrationPlot:
         return dict(zip(self.concentrations, list(self.raw_data_list.values())))
 
     def dict_to_df(self) -> pd.DataFrame:
+
+
         df = pd.DataFrame()
         data = self.num_to_conc()
+        print('Hello')
+        print(data.keys())
 
         for n in self.concentrations:
             x = data[n]['x']
@@ -151,7 +158,7 @@ class CalibrationPlot:
 
     def plot_calibration_regression(self,reg_params):
 
-        data = self.plot_picked_points()
+        data = self.dict_to_df()
         coef, intercept, ypred = reg_params
         calib_mean = calibration_mean(data_selection=data)
 
