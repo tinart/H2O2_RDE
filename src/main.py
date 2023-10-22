@@ -3,9 +3,9 @@ import os
 import pandas as pd
 
 from file_handling import ReadData
-from data_processing import RawPlot, CalibrationPlot, PlotDataStart, BaseLineCorrection
+from data_processing import RawPlot, CalibrationPlot, PlotDataStart, BaseLineCorrection, InitialRateDetermination
 from data_calculations import calibration_regression, signal_to_concentration,\
-    baseline_regression, baseline_correction_function
+    baseline_regression, baseline_correction_function, initial_rate_regression
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -110,6 +110,17 @@ class DataProcessing:
         data_handler = ReadData(path=self.file_path)
         data_handler.move_file_after_analysis()
 
+    def determine_initial_rate(self,dictionary):
+
+        int_rate = InitialRateDetermination()
+        int_rate.dict_to_dataframe(dictionary)
+        int_rate.pick_initial_rate_points()
+
+        initial_rate_data = int_rate.plot_picked_points()
+        int_rate.plot_regression_initial_rate()
+
+
+
 
     def export_longform_dataframe(self):
         raise NotImplementedError
@@ -137,7 +148,7 @@ def create_longform_dataframe(data_dictionary, file_path):
             y_values = values['[H2O2]']
             temp_df = pd.DataFrame({'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
             df = pd.concat([df, temp_df], ignore_index=True)
-            print(df)
+
 
     return df
 
@@ -223,6 +234,10 @@ def analyze(data_path):
             y = processor.analyzed_y
             file = get_file_name(data_path)
             analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
+
+            processor.determine_initial_rate(analyzed_data_dictionary)
+
+
 
 
         exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)

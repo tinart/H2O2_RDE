@@ -36,3 +36,7 @@ def signal_to_concentration(regression_parameters, truncated_data):
     h2o2_y = (truncated_data['y'] - b) / a[0]
 
     return truncated_data['x'], h2o2_y
+
+def initial_rate_regression(x,y):
+
+    return fit_linear_regression(x, y)

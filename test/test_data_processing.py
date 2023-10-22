@@ -1,7 +1,7 @@
 
 import pytest
 import pandas as pd
-from data_processing import RawPlot, BaseLineCorrection
+from src.data_processing import RawPlot, BaseLineCorrection
 
 @pytest.fixture
 def setup_dataframe():
