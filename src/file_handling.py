@@ -31,7 +31,7 @@ class ReadData:
 
 
 
-    def read_data(self) -> pd.DataFrame:
+    def read_data(self) -> tuple:
         if self.data_cache is None:
             for file in os.listdir(self.path):
                 if file.endswith('.csv'):
