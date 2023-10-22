@@ -23,6 +23,7 @@ def read_files(file_path):
     global data_reader
     if data_reader is None:
         data_reader = ReadData(path=file_path)
+
     data_reader.create_new_folder()
     cleaned_data = data_reader.drop_nan_dataframe()
     return cleaned_data
@@ -49,29 +50,30 @@ class DataProcessing:
     def raw_plotter(self):
 
 
-            raw_plotter = RawPlot(self.data_frame)
-            raw_plotter.plot_raw_data()
+        raw_plotter = RawPlot(self.data_frame)
+        raw_plotter.plot_raw_data()
 
-            print(f'File handling error , check if dir is empty.')
+
 
 
 
     def baseline_correction(self):
 
 
-        try:
-            baseline_correction = BaseLineCorrection(self.data_frame)
-            baseline_correction.pick_baseline_points()
-            baseline_data = baseline_correction.baseline_data()
 
-            baseline_coefficient, _, ypred = baseline_regression(baseline_data, self.data_frame)
-            self.bsl_data = baseline_correction_function(self.data_frame, baseline_coefficient)
-            baseline_correction.plot_regression_baseline()
+        baseline_correction = BaseLineCorrection(self.data_frame)
+        baseline_correction.pick_baseline_points()
+        baseline_data = baseline_correction.baseline_data()
+
+        baseline_coefficient, _, ypred = baseline_regression(baseline_data, self.data_frame)
+        self.bsl_data = baseline_correction_function(self.data_frame, baseline_coefficient)
+        baseline_correction.plot_regression_baseline()
 
 
 
-        except:
-            pass
+
+
+
 
 
 
@@ -193,34 +195,39 @@ def export_dataframe_to_excel(df, output_filename,path):
 def seaborn_plot(dataframe):
 
     sns.lineplot(data=dataframe,x='Time (s)',y='[H2O2]',hue='Filename')
-    print('Hello')
+
     plt.show()
 
 def analyze(data_path):
     data_reader = ReadData(data_path)
     total_files = data_reader.count_files()
-    output_filename = 'data.xlsx'
-    analyzed_data_dictionary = {}
+    if total_files == 0:
+        print('No .csv files found in directory, check filepath.')
+    else:
+        output_filename = 'data.xlsx'
+        analyzed_data_dictionary = {}
 
-    for _ in range(total_files):
-        data_frame = read_files(file_path=data_path)
-
-        processor = DataProcessing(data_frame,data_path)
-        processor.raw_plotter()
-        processor.baseline_correction()
-        processor.calibration()
-        processor.truncated_plotter()
-        processor.plot_analyzed_data()
-
-        x = processor.analyzed_x
-        y = processor.analyzed_y
-        file = get_file_name(data_path)
-        analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
+        for _ in range(total_files):
 
 
-    exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)
+            data_frame = read_files(file_path=data_path)
 
-    seaborn_plot(exported_data)
+            processor = DataProcessing(data_frame,data_path)
+            processor.raw_plotter()
+            processor.baseline_correction()
+            processor.calibration()
+            processor.truncated_plotter()
+            processor.plot_analyzed_data()
+
+            x = processor.analyzed_x
+            y = processor.analyzed_y
+            file = get_file_name(data_path)
+            analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
+
+
+        exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)
+
+        seaborn_plot(exported_data)
 
 if __name__ == '__main__':
     data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\b\Selection'

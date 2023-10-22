@@ -29,6 +29,8 @@ class ReadData:
             if file.endswith('.csv'):
                 return file
 
+
+
     def read_data(self) -> pd.DataFrame:
         if self.data_cache is None:
             for file in os.listdir(self.path):
@@ -36,6 +38,8 @@ class ReadData:
                     self.file.append(file)
                     with open(os.path.join(self.path, file), 'r') as rde_txtfile:
                         self.data_cache = pd.read_csv(rde_txtfile, delimiter=',')
+
+
         return self.file[-1], self.data_cache
 
     def get_header(self) -> list:

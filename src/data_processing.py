@@ -18,10 +18,12 @@ class RawPlot:
     def plot_raw_data(self):
         col_names = self.get_colnames
         data = self.df
+
+
         plt.plot(
             data[col_names[0]],
             data[col_names[1]]
-        )
+            )
         plt.title('Raw Data')
         plt.xlabel(col_names[0])
         plt.ylabel(col_names[1])
