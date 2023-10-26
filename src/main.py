@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+import shutil
 
 from file_handling import ReadData
 from data_processing import RawPlot, CalibrationPlot, PlotDataStart, BaseLineCorrection, InitialRateDetermination
@@ -25,8 +26,10 @@ def read_files(file_path):
         data_reader = ReadData(path=file_path)
 
     data_reader.create_new_folder()
-    cleaned_data = data_reader.drop_nan_dataframe()
-    return cleaned_data
+    file, cleaned_data = data_reader.drop_nan_dataframe()
+    file
+
+    return file, cleaned_data
 
 def get_file_name(file_path):
     global data_reader
@@ -34,6 +37,20 @@ def get_file_name(file_path):
         data_reader = ReadData(path=file_path)
     file = data_reader.get_filename()
     return file
+
+def count_files(data_path):
+        csv_file_count = sum(1 for file in os.listdir(data_path) if file.endswith(".csv"))
+        return csv_file_count
+
+def move_file_after_analysis(file,data_path):
+
+
+    file_path = os.path.join(data_path, file)
+    shutil.move(file_path, os.path.join(data_path, 'Analyzed'))
+
+
+def reset_data_reader():
+    data_reader = None
 
 class DataProcessing:
 
@@ -153,47 +170,7 @@ def create_longform_dataframe(data_dictionary, file_path):
     return df
 
 
-def export_dataframe_to_excel(df, output_filename,path):
-    """
-    Export a DataFrame with multiple filenames to an Excel file with separate sheets.
 
-    Args:
-        df (pd.DataFrame): The DataFrame with columns 'Filename', 'Time (s)', and '[H2O2]'.
-        output_filename (str): The desired output filename for the Excel file.
-    """
-    # Create a new Excel workbook
-    os.chdir(f'{path}\Analyzed')
-    wb = Workbook()
-
-    # Loop through each unique filename and export its data to a separate sheet
-    for filename in df['Filename'].unique():
-        # Create a new worksheet for each filename
-        ws = wb.create_sheet(title=filename)
-
-        # Set column widths
-        ws.column_dimensions['A'].width = 30
-        ws.column_dimensions['B'].width = 15
-        ws.column_dimensions['C'].width = 15
-
-        # Merge cells for the "Filename" column and place it in the first cell
-        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=3)
-        cell = ws.cell(row=1, column=1)
-        cell.value = filename
-        cell.alignment = Alignment(horizontal='center', vertical='center')
-
-        # Filter the data for the current filename and place "Time (s)" and "[H2O2]" columns underneath
-        filtered_data = df[df['Filename'] == filename][['Time (s)', '[H2O2]']]
-        for row in dataframe_to_rows(filtered_data, index=False, header=False):
-            ws.append(row)
-
-    # Remove the default empty sheet created when the workbook is initialized
-    if 'Sheet' in wb.sheetnames:
-        wb.remove(wb['Sheet'])
-
-    # Save the workbook to an Excel file
-    wb.save(output_filename)
-
-    print(f'Data has been exported to {output_filename}')
 
 
 # Specify the desired output filename
@@ -205,45 +182,53 @@ def export_dataframe_to_excel(df, output_filename,path):
 
 def seaborn_plot(dataframe):
 
-    sns.lineplot(data=dataframe,x='Time (s)',y='[H2O2]',hue='Filename')
+    sns_plot = sns.lineplot(data=dataframe,x='Time (s)',y='[H2O2]',hue='Filename')
+    sns_plot.get_figure().savefig('Data.pdf')
 
     plt.show()
 
 def analyze(data_path):
+
     data_reader = ReadData(data_path)
-    total_files = data_reader.count_files()
-    if total_files == 0:
-        print('No .csv files found in directory, check filepath.')
-    else:
-        output_filename = 'data.xlsx'
-        analyzed_data_dictionary = {}
+    data_reader.get_filename_list()
+    for file in data_reader.file_list:
+        data_reader.read_data()
 
-        for _ in range(total_files):
+    analyzed_data_dictionary = {}
+    for file in data_reader.file_list:
+
+        data_frame = data_reader.drop_nan_dataframe(file)
 
 
-            data_frame = read_files(file_path=data_path)
 
-            processor = DataProcessing(data_frame,data_path)
-            processor.raw_plotter()
-            processor.baseline_correction()
-            processor.calibration()
-            processor.truncated_plotter()
-            processor.plot_analyzed_data()
 
-            x = processor.analyzed_x
-            y = processor.analyzed_y
-            file = get_file_name(data_path)
-            analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
 
-            processor.determine_initial_rate(analyzed_data_dictionary)
 
+
+
+        processor = DataProcessing(data_frame,data_path)
+        processor.raw_plotter()
+        processor.baseline_correction()
+        processor.calibration()
+        processor.truncated_plotter()
+        processor.plot_analyzed_data()
+
+        x = processor.analyzed_x
+        y = processor.analyzed_y
+
+        analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
+
+        processor.determine_initial_rate(analyzed_data_dictionary)
+
+        move_file_after_analysis(file,data_path)
+        reset_data_reader()
 
 
 
         exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)
 
-        seaborn_plot(exported_data)
+    seaborn_plot(exported_data)
 
 if __name__ == '__main__':
-    data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\b\Selection'
+    data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\231023_CBP21_CN\No-Bom'
     analyze(data_path)

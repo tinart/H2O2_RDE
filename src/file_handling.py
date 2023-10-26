@@ -8,63 +8,46 @@ import shutil
 
 
 
+
 class ReadData:
 
     def __init__(self, path:str):
         self.path = path
-        self.file = []
+        self.file_list = []
         self.dictionary = {}
-        self.data_cache = None  # Cache to store read data
+        self.data_cache = {}  # Cache to store read data for each file
 
     def create_new_folder(self)-> None:
         analyzed_directory = os.path.join(self.path, 'Analyzed')
         os.makedirs(analyzed_directory, exist_ok=True)
 
     def count_files(self):
-        csv_file_count = sum(1 for file in os.listdir(self.path) if file.endswith(".csv"))
-        return csv_file_count
+        return sum(1 for file in os.listdir(self.path) if file.endswith(".csv"))
 
-    def get_filename(self):
-        for file in os.listdir(self.path):
-            if file.endswith('.csv'):
-                return file
+    def get_filename_list(self):
+        self.file_list = [file for file in os.listdir(self.path) if file.endswith('.csv')]
 
+    def read_data(self):
+        for file in self.file_list:
+            with open(os.path.join(self.path, file), 'r') as csv_file:
+                self.data_cache[file] = pd.read_csv(csv_file, delimiter=',')
 
+    def get_header(self, file) -> list:
+        return list(self.data_cache[file].columns)
 
-    def read_data(self) -> tuple:
-        if self.data_cache is None:
-            for file in os.listdir(self.path):
-                if file.endswith('.csv'):
-                    self.file.append(file)
-                    with open(os.path.join(self.path, file), 'r') as rde_txtfile:
-                        self.data_cache = pd.read_csv(rde_txtfile, delimiter=',')
-
-
-        return self.file[-1], self.data_cache
-
-    def get_header(self) -> list:
-        _, data = self.read_data()
-        return list(data.columns)
-
-    def get_dataframe(self) -> pd.DataFrame:
-        _, data = self.read_data()
-        col1, col2, col3, col4 = self.get_header()
+    def get_dataframe(self, file) -> pd.DataFrame:
+        data = self.data_cache[file]
+        col1, col2 = self.get_header(file)
         return pd.DataFrame({col1: data[col1], col2: data[col2]})
 
-    def drop_nan_dataframe(self):
-        df = self.get_dataframe()
+    def drop_nan_dataframe(self, file):
+        df = self.get_dataframe(file)
         closest_index = (df['Time (s)'] - 2).abs().idxmin()
-        truncated_dataframe = df.iloc[closest_index:].dropna()
-        return truncated_dataframe
+        return df.iloc[closest_index:].dropna()
 
     def create_data_dictionary(self, filename, analyzed_dataframe):
-        self.dictionary[filename] = {'Time (s)': analyzed_dataframe[0], '[H2O2]': analyzed_dataframe[1]}
-        return self.dictionary
+        self.dictionary[filename] = {'Time (s)': analyzed_dataframe['Time (s)'], '[H2O2]': analyzed_dataframe['[H2O2]']}
 
-    def move_file_after_analysis(self):
-        try:
-            file, _ = self.read_data()
-            file_path = os.path.join(self.path, file)
-            shutil.move(file_path, os.path.join(self.path, 'Analyzed'))
-        except Exception as e:
-            print(f"Error while moving file: {e}")
+    def move_file_after_analysis(self, file):
+        file_path = os.path.join(self.path, file)
+        shutil.move(file_path, os.path.join(self.path, 'Analyzed'))
