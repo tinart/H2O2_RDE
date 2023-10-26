@@ -198,6 +198,7 @@ def analyze(data_path):
     for file in data_reader.file_list:
 
         data_frame = data_reader.drop_nan_dataframe(file)
+        print('Hello test')
 
 
 
