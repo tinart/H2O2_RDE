@@ -10,6 +10,7 @@ def fit_linear_regression(x, y):
     y = np.array(y).reshape(-1, 1)
     lr.fit(x, y)
     ypred = lr.predict(x)
+    print("test syn")
 
 
     return lr.coef_, lr.intercept_, ypred
