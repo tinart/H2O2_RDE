@@ -219,7 +219,7 @@ def analyze(data_path):
 
         analyzed_data_dictionary[file] = {'Time (s)': x - x.iloc[0], '[H2O2]': y}
 
-        processor.determine_initial_rate(analyzed_data_dictionary)
+        #processor.determine_initial_rate(analyzed_data_dictionary)
 
         move_file_after_analysis(file,data_path)
         reset_data_reader()
