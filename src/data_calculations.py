@@ -2,8 +2,6 @@ from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
 
-
-
 def fit_linear_regression(x, y):
     lr = LinearRegression()
     x = np.array(x).reshape(-1, 1)
