@@ -11,36 +11,13 @@ from data_calculations import calibration_regression, signal_to_concentration,\
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Alignment
 
 
 
 
-data_reader = None
 
-def read_files(file_path):
-    global data_reader
-    if data_reader is None:
-        data_reader = ReadData(path=file_path)
 
-    data_reader.create_new_folder()
-    file, cleaned_data = data_reader.drop_nan_dataframe()
-    file
 
-    return file, cleaned_data
-
-def get_file_name(file_path):
-    global data_reader
-    if data_reader is None:
-        data_reader = ReadData(path=file_path)
-    file = data_reader.get_filename()
-    return file
-
-def count_files(data_path):
-        csv_file_count = sum(1 for file in os.listdir(data_path) if file.endswith(".csv"))
-        return csv_file_count
 
 def move_file_after_analysis(file,data_path):
 
@@ -49,8 +26,7 @@ def move_file_after_analysis(file,data_path):
     shutil.move(file_path, os.path.join(data_path, 'Analyzed'))
 
 
-def reset_data_reader():
-    data_reader = None
+
 
 class DataProcessing:
 
@@ -149,25 +125,8 @@ class DataProcessing:
 
 
 
-def data_export_handling(file_path):
-
-    data_handler = ReadData(path=file_path)
-    data_handler.move_file_after_analysis()
-
-def create_longform_dataframe(data_dictionary, file_path):
-    # Create an empty DataFrame
-    df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
-
-    # Iterate through the dictionary and append 'a' and 'y' values as rows
-    for filename, values in data_dictionary.items():
-        if 'Time (s)' in values and '[H2O2]' in values:
-            x_values = values['Time (s)']
-            y_values = values['[H2O2]']
-            temp_df = pd.DataFrame({'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
-            df = pd.concat([df, temp_df], ignore_index=True)
 
 
-    return df
 
 
 
@@ -222,14 +181,14 @@ def analyze(data_path):
         #processor.determine_initial_rate(analyzed_data_dictionary)
 
         move_file_after_analysis(file,data_path)
-        reset_data_reader()
 
 
 
-        exported_data = create_longform_dataframe(data_dictionary=analyzed_data_dictionary, file_path=data_path)
+
+    exported_data = data_reader.create_longform_dataframe(data_dictionary=analyzed_data_dictionary)
 
     seaborn_plot(exported_data)
 
 if __name__ == '__main__':
-    data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\231023_CBP21_CN\No-Bom'
+    data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\b\Selection'
     analyze(data_path)
