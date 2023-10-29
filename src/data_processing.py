@@ -72,7 +72,7 @@ class BaseLineCorrection:
     def plot_regression_baseline(self):
 
         data = self.baseline_data()
-        print(data)
+
 
         bsl_coeff, _, ypred = baseline_regression(data,self.df)
 
