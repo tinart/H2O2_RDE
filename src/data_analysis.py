@@ -155,24 +155,35 @@ def analyze(data_path):
 
     analyzed_data_dictionary = {}
     for file in data_reader.file_list:
+        try:
+            data_frame = data_reader.drop_nan_dataframe(file)
+        except KeyError as e:
+            print(f'\033[91m A {e} occured, please check if your path is correct \033[0m')
+            break
 
-        data_frame = data_reader.drop_nan_dataframe(file)
-        print('Hello test')
-
-
-
-
-
-
-
-
+        MAX_RETRIES = 3
         processor = DataProcessing(data_frame,data_path)
-        processor.raw_plotter()
-        processor.baseline_correction()
-        processor.calibration()
-        processor.truncated_plotter()
-        processor.plot_analyzed_data()
 
+        for method, error_type, description in [
+            (processor.raw_plotter, Exception, "plot raw data"),
+            (processor.baseline_correction, Exception, "correct baseline"),
+            (processor.calibration, Exception, "calibrate data"),
+            (processor.truncated_plotter, Exception, "plot truncated data"),
+            (processor.plot_analyzed_data, Exception, "plot analyzed data")
+        ]:
+            while True:  # Keep looping until the user is satisfied
+                try:
+                    method()
+                except Exception as e:
+                    print(f"\033[91mFailed to {description} for file {file}. Error: {e}\033[0m")
+
+                user_input = input(f"\033[91mDo you want to re-run {description} for file {file}? (y/n):\033[0m ").strip().lower()
+
+                if user_input == 'n':
+                    break  # Break the while loop and proceed to the next method
+                elif user_input != 'y':
+                    print("\033[91mInvalid input. Assuming you want to proceed to the next step.\033[0m")
+                    break
         x = processor.analyzed_x
         y = processor.analyzed_y
 
@@ -189,3 +200,6 @@ def analyze(data_path):
 
     seaborn_plot(exported_data)
 
+
+data_path = r'C:\Users\olegolt\OneDrive - Norwegian University of Life Sciences\PhD\Boku\Experiments\Sensor\b\Selection'
+#analyze(data_path)
