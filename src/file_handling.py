@@ -3,9 +3,16 @@ import os
 import matplotlib.pyplot as plt
 import shutil
 from datetime import datetime
+import time
 
-
-
+def time_function(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Function {func.__name__} took {end_time - start_time} seconds to complete.")
+        return result
+    return wrapper
 
 
 
@@ -38,7 +45,7 @@ class ReadData:
 
     def get_dataframe(self, file) -> pd.DataFrame:
         data = self.data_cache[file]
-        col1, col2, col3, col4 = self.get_header(file)
+        col1, col2 = self.get_header(file)
         return pd.DataFrame({col1: data[col1], col2: data[col2]})
 
     def drop_nan_dataframe(self, file):

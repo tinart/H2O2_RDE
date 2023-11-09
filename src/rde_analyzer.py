@@ -1,5 +1,7 @@
-from data_analysis import analyze
+import os.path
 
+from data_analysis import analyze, intial_rate_analysis, plot_precomputed_rolling_regression_facet_grid, intial_rate_manual
+from data_smoothing import smooth_data
 import argparse
 
 
@@ -65,9 +67,16 @@ def main():
         if choice == "1":
             analyze(path)
         elif choice == "2":
-            print('2')
+            file_name = input('\nType in .csv filename')
+
+            smoothing_window = input('\nSelect window size for smothing')
+            smooth_data(input_csv_path= os.path.join(path,file_name),window_size=smoothing_window)
         elif choice == "3":
-            print('3')
+            file_name = input('\nType in .csv filename')
+            intial_rate_manual(file_name, path)
+
+            #data, results = intial_rate_analysis(input_filename=file_name)
+            #plot_precomputed_rolling_regression_facet_grid(data, results)
         elif choice == "4":
             print('4')
         elif choice == "5":

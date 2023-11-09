@@ -246,18 +246,18 @@ class InitialRateDetermination:
         self.x = []
         self.y = []
 
-    def dict_to_dataframe(self,dictionary):
+    def dataframe(self,df):
 
-        df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
+        #df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
 
         # Iterate through the dictionary and append 'a' and 'y' values as rows
-        for filename, values in dictionary.items():
-            if 'Time (s)' in values and '[H2O2]' in values:
-                x_values = values['Time (s)']
-                y_values = values['[H2O2]']
-                temp_df = pd.DataFrame(
-                    {'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
-                df = pd.concat([df, temp_df], ignore_index=True)
+        #for filename, values in dictionary.items():
+        #    if 'Time (s)' in values and '[H2O2]' in values:
+        #        x_values = values['Time (s)']
+        #        y_values = values['[H2O2]']
+        #        temp_df = pd.DataFrame(
+        #            {'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
+        #        df = pd.concat([df, temp_df], ignore_index=True)
 
 
         self.df = df
@@ -270,8 +270,8 @@ class InitialRateDetermination:
         column_names = self.get_colnames
         ind = event.ind
 
-        x = np.take(self.df[column_names[1]], ind)
-        y = np.take(self.df[column_names[2]], ind)
+        x = np.take(self.df['Time (s)'], ind)
+        y = np.take(self.df['[H2O2]'], ind)
 
         self.x.extend(x)
         self.y.extend(y)
@@ -282,7 +282,7 @@ class InitialRateDetermination:
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
-        col = ax1.scatter(self.df[col_names[1]], self.df[col_names[2]], picker=True)
+        col = ax1.scatter(self.df['Time (s)'], self.df['[H2O2]'], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.initial_rate_picker)
         plt.title('Select initial rate')
@@ -294,7 +294,7 @@ class InitialRateDetermination:
 
 
         col_names = self.get_colnames
-        plt.scatter(self.df[col_names[1]], self.df[col_names[2]], s=3)
+        plt.scatter(self.df['Time (s)'], self.df['[H2O2]'], s=3)
 
         plt.scatter(self.x,self.y, s=5, color='red')
         plt.title('Picked calibration points')
@@ -312,7 +312,7 @@ class InitialRateDetermination:
         data = self.initial_rate_data()
 
 
-        bsl_coeff, _, ypred = initial_rate_regression(self.x,self.y)
+        bsl_coeff, intercept, ypred = initial_rate_regression(self.x,self.y)
 
         x = np.array(data['Values']['x']).reshape(-1, 1)
         y = np.array(data['Values']['y']).reshape(-1, 1)
@@ -322,6 +322,8 @@ class InitialRateDetermination:
         plt.plot(x, ypred)
         plt.title('Selected baseline regression')
         plt.show()
+
+        return bsl_coeff, intercept
 
 
 

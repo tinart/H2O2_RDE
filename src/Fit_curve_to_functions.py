@@ -5,7 +5,8 @@ Created on Fri Oct 27 12:14:13 2023
 
 @author: synnoveronnekleiv
 """
-
+import numpy as np
+import matplotlib.pyplot as plt
 # Fit curve to exponential function
 # Exponential function: y = a * exp(b * x) + c
 def exponential(x, a, b, c):
