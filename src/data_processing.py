@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 from data_calculations import calibration_regression, signal_to_concentration,\
-    baseline_regression, baseline_correction_function, calibration_mean, initial_rate_regression
+    baseline_regression, baseline_correction_function, calibration_mean, initial_rate_regression, savitzky_golay_smoothing, exponential_smoothing,\
+    lowess_smoothing, moving_average_smoothing, gaussian_smoothing
 
 
 class RawPlot:
@@ -324,8 +326,6 @@ class InitialRateDetermination:
         plt.show()
 
         return bsl_coeff, intercept
-
-
 
 
 

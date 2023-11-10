@@ -1,6 +1,11 @@
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
+import numpy as np
+from scipy.signal import savgol_filter
+from scipy.ndimage import gaussian_filter1d
+from statsmodels.nonparametric.smoothers_lowess import lowess
+
 
 def fit_linear_regression(x, y):
     lr = LinearRegression()
@@ -72,4 +77,27 @@ def rolling_regression(group, window_size=15):
 
     return steepest_slope, steepest_intercept, steepest_window
 
+
+# Moving Average smoothing method
+def moving_average_smoothing(data, window_size):
+    return data.rolling(window=window_size, min_periods=1, center=True).mean()
+
+# Exponential Smoothing method
+def exponential_smoothing(data, alpha):
+    return data.ewm(alpha=alpha).mean()
+
+# Savitzky-Golay smoothing method
+def savitzky_golay_smoothing(data, window_size, poly_order):
+    # Ensure the window size is odd and greater than the polynomial order
+    if window_size % 2 == 0:
+        window_size += 1
+    return savgol_filter(data, window_size, poly_order)
+
+# Lowess smoothing method
+def lowess_smoothing(data, time, frac):
+    return lowess(data, time, frac=frac, return_sorted=False)
+
+# Gaussian smoothing method
+def gaussian_smoothing(data, sigma):
+    return gaussian_filter1d(data, sigma=sigma)
 

@@ -78,3 +78,41 @@ class ReadData:
         df.to_csv(f'{formated_date}_longform_analyzed_data.csv')
 
         return df
+
+
+def find_csv_files(path):
+    """
+    Search the current directory for CSV files and list them as options for the user to select.
+
+    Returns:
+        A list of CSV file paths in the current directory.
+    """
+    csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
+    return csv_files
+
+def select_csv_file(csv_files, path):
+    """
+    Prompt the user to select a CSV file from a list of files.
+
+    Parameters:
+        csv_files: A list of CSV file names.
+
+    Returns:
+        The path of the selected CSV file.
+    """
+    print("Please select a CSV file to proceed:")
+    for idx, file in enumerate(csv_files):
+        print(f"{idx + 1}. {file}")
+
+    while True:
+        try:
+            selection = int(input("Enter the number of the CSV file you want to select: "))
+            # Adjust for zero-based index
+            if 1 <= selection <= len(csv_files):
+                return os.path.join(path,csv_files[selection - 1])
+            else:
+                print("Invalid selection. Please try again.")
+                break
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+

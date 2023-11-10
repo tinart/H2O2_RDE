@@ -1,7 +1,9 @@
 import os.path
+import pandas as pd
 
 from data_analysis import analyze, intial_rate_analysis, plot_precomputed_rolling_regression_facet_grid, intial_rate_manual
-from data_smoothing import smooth_data
+from data_smoothing import smoothing_handler
+from file_handling import select_csv_file, find_csv_files
 import argparse
 
 
@@ -67,12 +69,16 @@ def main():
         if choice == "1":
             analyze(path)
         elif choice == "2":
-            file_name = input('\nType in .csv filename')
 
-            smoothing_window = input('\nSelect window size for smothing')
-            smooth_data(input_csv_path= os.path.join(path,file_name),window_size=smoothing_window)
+
+            csv_files = find_csv_files(path)
+            file_name = select_csv_file(csv_files, path)
+            smoothing_handler(file_name,path)
+
         elif choice == "3":
-            file_name = input('\nType in .csv filename')
+
+            csv_files = find_csv_files(path)
+            file_name = select_csv_file(csv_files, path)
             intial_rate_manual(file_name, path)
 
             #data, results = intial_rate_analysis(input_filename=file_name)
