@@ -1,10 +1,11 @@
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
-import numpy as np
 from scipy.signal import savgol_filter
 from scipy.ndimage import gaussian_filter1d
 from statsmodels.nonparametric.smoothers_lowess import lowess
+import difflib
+from itertools import combinations
 
 
 def fit_linear_regression(x, y):
@@ -100,4 +101,9 @@ def lowess_smoothing(data, time, frac):
 # Gaussian smoothing method
 def gaussian_smoothing(data, sigma):
     return gaussian_filter1d(data, sigma=sigma)
+
+
+
+
+
 
