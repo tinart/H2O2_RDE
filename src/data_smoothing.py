@@ -55,7 +55,7 @@ def smoothing_menu(data_by_file,path):
             if user_satisfied == 'y':
                 export_smoothed_data(smoothed_data_by_file,data_by_file,path)
                 print('Good')
-                print(smoothed_data_by_file)
+
             #export_smoothed_data(smoothed_data_by_file)
                 break
 

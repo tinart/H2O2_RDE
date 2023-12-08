@@ -4,16 +4,21 @@ import pandas as pd
 from data_analysis import analyze, intial_rate_analysis, plot_precomputed_rolling_regression_facet_grid, intial_rate_manual
 from data_smoothing import smoothing_handler
 from file_handling import select_csv_file, find_csv_files
+from figure_plotting import plotting_menu
 import argparse
 
-
+def comma_separated_numbers(string):
+    return string.split(',')
 
 def main():
     parser = argparse.ArgumentParser(description="Data Processing CLI")
     parser.add_argument("-p", "--path", required=True, help="Path to the data file")
+    parser.add_argument("-c", type=comma_separated_numbers, help="Comma-separated list of numbers")
+
     args = parser.parse_args()
 
     path = args.path
+    concentration_values = args.c
 
     print("""
     
@@ -55,7 +60,7 @@ def main():
                 
     """)
     
-    
+
     while True:
         print("\nMenu:")
         print("1) Analysis")
@@ -67,7 +72,7 @@ def main():
         choice = input("\nSelect an option: ")
 
         if choice == "1":
-            analyze(path)
+            analyze(path, concentration_values)
         elif choice == "2":
 
 
@@ -84,7 +89,11 @@ def main():
             #data, results = intial_rate_analysis(input_filename=file_name)
             #plot_precomputed_rolling_regression_facet_grid(data, results)
         elif choice == "4":
-            print('4')
+
+            plotting_menu(path)
+
+
+
         elif choice == "5":
             print("Exiting.")
             break

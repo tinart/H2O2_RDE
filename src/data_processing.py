@@ -93,11 +93,11 @@ class BaseLineCorrection:
 
 class CalibrationPlot:
 
-    def __init__(self, df):
+    def __init__(self, df, concentrations):
         self.df = df
         self.n = 1
         self.raw_data_list = {}
-        self.concentrations = ['0','20','40','60','80','100']
+        self.concentrations = concentrations
 
 
 
