@@ -55,8 +55,12 @@ def plotting_menu(path):
             plot_smoothed_over_raw(raw_data_path, smoothed_data_path)
 
         elif method_choice == '4':
-            file_list = list_files_from_csv(path)
-            ask_user_for_replicates(file_list)
+
+            files = find_csv_files(path)
+            initial_rate_path = select_csv_file(files,path)
+
+            grouped_replicates = group_replicates(initial_rate_path)
+            plot_replicate_coefficients(grouped_replicates)
         else:
             print('Invalid choice, please select a number from the menu.')
 
@@ -110,23 +114,55 @@ def plot_smoothed_data(smoothed_data_path):
     plt.show()
 
 
-def list_files_from_csv(csv_file_path):
-    with open(csv_file_path, newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        files_list = next(reader)  # Assuming the first row contains filenames
-        return files_list
+def group_replicates(file_path):
+    # Load the CSV file
+    df = pd.read_csv(file_path)
+    df['Replicate'] = None  # Initialize the Replicate column
 
-def ask_user_for_replicates(files_list):
-    replicates_info = {}
-    for i, file_name in enumerate(files_list, start=1):
-        print(f"{i}) {file_name}")
-    print("Please specify which numbers are replicates in the format: 1,2; 3,4")
-    print("This means 1 and 2 are replicates, and 3 and 4 are replicates.")
-    user_input = input("Enter replicates: ")
-    for group in user_input.split(';'):
-        replicate_group = list(map(str.strip, group.split(',')))
-        for replicate in replicate_group:
-            replicates_info[replicate] = replicate_group
-    return replicates_info
+    # Display the filenames and their corresponding index
+    for index, row in df.iterrows():
+        print(f"{index}: {row['Filename']}")
 
+    replicate_number = 1
+    while True:
+        # Prompt the user to select replicates or quit
+        replicate_input = input("Select replicates (e.g., '1,2') or 'q' to quit: ")
+
+        # Check if the user wants to quit
+        if replicate_input.lower() == 'q':
+            break
+
+        # Process the user input
+        replicate_indices = [int(x.strip()) for x in replicate_input.split(',')]
+
+        # Assigning the replicate number to the selected rows
+        for index in replicate_indices:
+            df.at[index, 'Replicate'] = replicate_number
+
+        print(f"Replicate Group {replicate_number}:")
+        print(df.iloc[replicate_indices])
+        replicate_number += 1
+
+
+
+    return df
+
+def plot_replicate_coefficients(df):
+    # Ensure 'Replicate' is a categorical type
+    df['Replicate'] = df['Replicate'].astype('category')
+
+    # Calculating mean and standard deviation for each replicate group
+    stats_df = df.groupby('Replicate')['Coefficient'].agg(['mean', 'std']).reset_index()
+    stats_df['Replicate'] = stats_df['Replicate'].apply(lambda x: f'Sample {x}')
+
+    # Ensure 'std' is numeric
+    stats_df['std'] = pd.to_numeric(stats_df['std'], errors='coerce')
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Replicate', y='mean', yerr=stats_df['std'], data=stats_df, capsize=.2)
+    plt.title('Mean Coefficient with Standard Deviation for Each Replicate Group')
+    plt.xlabel('Replicate Group')
+    plt.ylabel('Mean Coefficient')
+    plt.show()
 
