@@ -10,7 +10,7 @@ The data files must be in .csv files, that are seperated using (,) to ensure tha
 
 create_rde_analysis_file_structure.py -p 'PATH/TO/DATA' -o '.old_file_ext' -n '.new_file_ext'
 
-  '-p', '--path', required=True, help="Path to the directory containing the files") \n
+  '-p', '--path', required=True, help="Path to the directory containing the files")<br>
   '-o', '--old', required=True, help="Old file extension to be replaced"
   '-n', '--new', required=True, help="New file extension to replace the old one"
 
@@ -32,4 +32,27 @@ python rde_analyzer.py -p "PATH" -c COMMA,SEPERATED,H202,CONCENTRATIONS
 
 ## Performing the analysis
 
-## Post analysis data processing  
+## Post analysis data processing
+
+### Data smoothing
+
+Smoothing Methods Explanation
+This module includes several smoothing methods, each with specific inputs to control their behavior:
+
+Moving Average  
+
+window_size: Specifies the number of data points used in each average. A larger window size results in smoother curves, but can potentially remove important trends or patterns.
+Exponential Smoothing
+
+alpha: A smoothing factor between 0 and 1. A higher alpha discounts older observations faster, providing a method that is more responsive to recent changes in the data.
+Savitzky-Golay Filter
+
+window_size: Determines the number of data points used in the local polynomial regression. As with the moving average, a larger window will produce a smoother curve.
+poly_order: The order of the polynomial used in the regression. A higher order can fit more complex data patterns, but may also lead to overfitting.
+Lowess Smoothing (Locally Weighted Scatterplot Smoothing)
+
+frac: Represents the fraction of data points used to compute each value in the smoothed curve. A smaller fraction focuses more closely on local data points, making the curve more sensitive to local variations.
+Gaussian Filter
+
+sigma: Defines the standard deviation for the Gaussian kernel. A higher sigma value means a wider kernel, leading to a smoother curve. This method is particularly effective for removing noise while preserving edges.
+Each of these methods provides a unique approach to smoothing data, allowing for flexibility in data analysis. By adjusting the input parameters, users can tailor the smoothing to the specific needs of their dataset.
