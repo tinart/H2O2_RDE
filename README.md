@@ -10,7 +10,7 @@ The data files must be in .csv files, that are seperated using (,) to ensure tha
 
 create_rde_analysis_file_structure.py -p 'PATH/TO/DATA' -o '.old_file_ext' -n '.new_file_ext'
 
-  '-p', '--path', required=True, help="Path to the directory containing the files")
+  '-p', '--path', required=True, help="Path to the directory containing the files") \n
   '-o', '--old', required=True, help="Old file extension to be replaced"
   '-n', '--new', required=True, help="New file extension to replace the old one"
 
