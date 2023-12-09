@@ -6,7 +6,7 @@ import src.data_calculations
 import pytest
 import numpy as np
 import pandas as pd
-from data_calculations import fit_linear_regression, baseline_regression, baseline_correction_function, calibration_mean
+from src.data_calculations import fit_linear_regression, baseline_regression, baseline_correction_function, calibration_mean
 
 
 def test_fit_linear_regression():
