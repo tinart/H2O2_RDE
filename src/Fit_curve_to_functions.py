@@ -9,9 +9,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 # Fit curve to exponential function
 # Exponential function: y = a * exp(b * x) + c
+
+def curve_fit(a):
+
+    print(a)
 def exponential(x, a, b, c):
     return a * np.exp(b * x) + c
 
+new_y = 0
+y_smooth = 0
+new_x = 0
 # Initial guesses:
 a_init = y_smooth[0]
 b_init = np.log(abs(y_smooth[-1]/y_smooth[0]) / (new_x[-1] - new_x[0]))
@@ -108,7 +115,7 @@ print(f'Fitted Quadratic: {a:.2f}x^2 + {b:.2f}x + {c:.2f}')
 # Sigmoid function
 def sigmoid(x, L, k, x0):
     return L / (1 + np.exp(-k * (x - x0)))
-
+x, y = 0,1
 # Initial guesses:
 L_guess = max(y)
 k_guess = 0.1
