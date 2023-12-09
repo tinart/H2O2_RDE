@@ -11,8 +11,8 @@ The data files must be in .csv files, that are seperated using (,) to ensure tha
 create_rde_analysis_file_structure.py -p 'PATH/TO/DATA' -o '.old_file_ext' -n '.new_file_ext'
 
   '-p', '--path', required=True, help="Path to the directory containing the files")<br>
-  '-o', '--old', required=True, help="Old file extension to be replaced"
-  '-n', '--new', required=True, help="New file extension to replace the old one"
+  '-o', '--old', required=True, help="Old file extension to be replaced"<br>
+  '-n', '--new', required=True, help="New file extension to replace the old one"<br>
 
 This will re-write all your files to be .csv files and remove Byte Order Marks from your data files. Therefore, keep a backup of you data at a secondary position.  
 
