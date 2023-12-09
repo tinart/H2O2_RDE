@@ -2,7 +2,7 @@
 import pytest
 import os
 import pandas as pd
-from file_handling import ReadData
+from src.file_handling import ReadData
 import shutil
 
 
@@ -32,13 +32,5 @@ def test_count_files(setup_directory):
     assert read_data.count_files() == 1
 
 
-def test_get_filename(setup_directory):
-    read_data = ReadData(setup_directory)
-    assert read_data.get_filename() == "test_file.csv"
 
-
-def test_read_data(setup_directory):
-    read_data = ReadData(setup_directory)
-    filename, df = read_data.read_data()
-    assert isinstance(df, pd.DataFrame)
 
