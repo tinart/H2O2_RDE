@@ -23,8 +23,8 @@ Perfrom a git clone on this respository and remember the local respository posit
 
 python rde_analyzer.py -p "PATH" -c COMMA,SEPERATED,H202,CONCENTRATIONS 
 
-  -p flag is the full path to the foler containing your data and should be written with quotations
-  -c flag is the concentrations of H2O2 used for the standard cruve e.i 0,20,40,60,80,100
+  -p flag is the full path to the foler containing your data and should be written with quotations<br>
+  -c flag is the concentrations of H2O2 used for the standard cruve e.i 0,20,40,60,80,100<br>
 
 
 
@@ -39,20 +39,26 @@ python rde_analyzer.py -p "PATH" -c COMMA,SEPERATED,H202,CONCENTRATIONS
 Smoothing Methods Explanation
 This module includes several smoothing methods, each with specific inputs to control their behavior:
 
-Moving Average  
+1. Moving Average  
 
-window_size: Specifies the number of data points used in each average. A larger window size results in smoother curves, but can potentially remove important trends or patterns.
-Exponential Smoothing
+window_size: Specifies the number of data points used in each average. A larger window size results in smoother curves, but can potentially remove important trends or patterns.<br>
 
-alpha: A smoothing factor between 0 and 1. A higher alpha discounts older observations faster, providing a method that is more responsive to recent changes in the data.
-Savitzky-Golay Filter
+2. Exponential Smoothing
+
+alpha: A smoothing factor between 0 and 1. A higher alpha discounts older observations faster, providing a method that is more responsive to recent changes in the data.<br>
+
+3. Savitzky-Golay Filter
 
 window_size: Determines the number of data points used in the local polynomial regression. As with the moving average, a larger window will produce a smoother curve.
-poly_order: The order of the polynomial used in the regression. A higher order can fit more complex data patterns, but may also lead to overfitting.
-Lowess Smoothing (Locally Weighted Scatterplot Smoothing)
+poly_order: The order of the polynomial used in the regression. A higher order can fit more complex data patterns, but may also lead to overfitting.<br>
 
-frac: Represents the fraction of data points used to compute each value in the smoothed curve. A smaller fraction focuses more closely on local data points, making the curve more sensitive to local variations.
-Gaussian Filter
+4. Lowess Smoothing (Locally Weighted Scatterplot Smoothing)
+
+frac: Represents the fraction of data points used to compute each value in the smoothed curve. A smaller fraction focuses more closely on local data points, making the curve more sensitive to local variations.<br>
+
+5. Gaussian Filter
 
 sigma: Defines the standard deviation for the Gaussian kernel. A higher sigma value means a wider kernel, leading to a smoother curve. This method is particularly effective for removing noise while preserving edges.
+
+
 Each of these methods provides a unique approach to smoothing data, allowing for flexibility in data analysis. By adjusting the input parameters, users can tailor the smoothing to the specific needs of their dataset.
