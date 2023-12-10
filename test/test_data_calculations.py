@@ -9,16 +9,14 @@ import pandas as pd
 from src.data_calculations import (fit_linear_regression, baseline_regression, baseline_correction_function,
                                    calibration_mean, v_to_tn)
 
-<<<<<<< HEAD
-def setup_df():
-=======
+
 def setup_dataframe():
     df = pd.DataFrame({'Time': [1, 2, 3], 'Coefficient': [0.1, 0.2, 0.3]})
     return df
 
 def check_column_exists(df, column_name):
     return column_name in df.columns
->>>>>>> origin/main
+
 
     df = pd.DataFrame()
 def test_fit_linear_regression():
