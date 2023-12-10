@@ -6,8 +6,15 @@ import src.data_calculations
 import pytest
 import numpy as np
 import pandas as pd
-from src.data_calculations import fit_linear_regression, baseline_regression, baseline_correction_function, calibration_mean
+from src.data_calculations import (fit_linear_regression, baseline_regression, baseline_correction_function,
+                                   calibration_mean, v_to_tn)
 
+def setup_dataframe():
+    df = pd.DataFrame({'Time': [1, 2, 3], 'Coefficient': [0.1, 0.2, 0.3]})
+    return df
+
+def check_column_exists(df, column_name):
+    return column_name in df.columns
 
 def test_fit_linear_regression():
     x = [1, 2, 3, 4, 5]
@@ -37,3 +44,13 @@ def test_calibration_mean():
     data = pd.DataFrame({'Concentration': ['1', '1', '2', '2'], 'Current': [0.1, 0.2, 0.3, 0.4]})
     mean_df = calibration_mean(data)
     assert isinstance(mean_df, pd.DataFrame)
+
+def test_v_to_tn():
+    data = setup_dataframe()
+    enzyme_c = 1
+
+    df = v_to_tn(data,enzyme_c)
+
+    assert isinstance(data, pd.DataFrame)
+    assert isinstance(df, pd.DataFrame)
+    assert check_column_exists(df,'Turnover_Number')
