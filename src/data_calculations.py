@@ -15,26 +15,30 @@ def fit_linear_regression(x, y):
     lr.fit(x, y)
     ypred = lr.predict(x)
 
-
-
     return lr.coef_, lr.intercept_, ypred
+
 
 def baseline_regression(data, raw_data):
     return fit_linear_regression(data['Values']['x'], data['Values']['y'])
+
 
 def baseline_correction_function(data, bsl_coefficient):
     corrected_current_value = data['WE(1).Current (A)'] - data['Time (s)'] * bsl_coefficient.item()
     corrected_dataframe = pd.DataFrame({'Time (s)': data['Time (s)'], 'Corrected Current (A)': corrected_current_value})
     return corrected_dataframe
 
+
 def calibration_mean(data_selection):
     data = data_selection.copy()
     data['Concentration'] = pd.to_numeric(data['Concentration'])
-    return data.groupby('Concentration', as_index=False).mean().rename(columns={'Concentration': 'Concentration Mean', 'Time': 'Time Mean', 'Signal': 'Signal Mean'})
+    return data.groupby('Concentration', as_index=False).mean().rename(
+        columns={'Concentration': 'Concentration Mean', 'Time': 'Time Mean', 'Signal': 'Signal Mean'})
+
 
 def calibration_regression(data):
     calib_mean = calibration_mean(data)
     return fit_linear_regression(calib_mean['Concentration Mean'], calib_mean['Signal Mean'])
+
 
 def signal_to_concentration(regression_parameters, truncated_data):
     a, b, _ = regression_parameters
@@ -42,8 +46,8 @@ def signal_to_concentration(regression_parameters, truncated_data):
 
     return truncated_data['x'], h2o2_y
 
-def initial_rate_regression(x,y):
 
+def initial_rate_regression(x, y):
     return fit_linear_regression(x, y)
 
 
@@ -83,9 +87,11 @@ def rolling_regression(group, window_size=15):
 def moving_average_smoothing(data, window_size):
     return data.rolling(window=window_size, min_periods=1, center=True).mean()
 
+
 # Exponential Smoothing method
 def exponential_smoothing(data, alpha):
     return data.ewm(alpha=alpha).mean()
+
 
 # Savitzky-Golay smoothing method
 def savitzky_golay_smoothing(data, window_size, poly_order):
@@ -94,16 +100,18 @@ def savitzky_golay_smoothing(data, window_size, poly_order):
         window_size += 1
     return savgol_filter(data, window_size, poly_order)
 
+
 # Lowess smoothing method
 def lowess_smoothing(data, time, frac):
     return lowess(data, time, frac=frac, return_sorted=False)
+
 
 # Gaussian smoothing method
 def gaussian_smoothing(data, sigma):
     return gaussian_filter1d(data, sigma=sigma)
 
 
-def v_to_tn(data,enzyme_concentration):
+def v_to_tn(data, enzyme_concentration):
     """
         Converts the 'Coefficient' column in the DataFrame to turnover numbers by dividing
         the absolute value of each coefficient by the enzyme concentration.
@@ -120,9 +128,3 @@ def v_to_tn(data,enzyme_concentration):
 
     data['Turnover_Number'] = data['Coefficient'].abs() / enzyme_concentration
     return data
-
-
-
-
-
-
