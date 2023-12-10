@@ -103,6 +103,25 @@ def gaussian_smoothing(data, sigma):
     return gaussian_filter1d(data, sigma=sigma)
 
 
+def v_to_tn(data,enzyme_concentration):
+    """
+        Converts the 'Coefficient' column in the DataFrame to turnover numbers by dividing
+        the absolute value of each coefficient by the enzyme concentration.
+
+        Parameters:
+        df (pandas.DataFrame): DataFrame containing the 'Coefficient' column.
+        enzyme_concentration (float): The concentration of the enzyme.
+
+        Returns:
+        pandas.DataFrame: The updated DataFrame with 'Coefficient' converted to turnover numbers.
+        """
+    if enzyme_concentration <= 0:
+        raise ValueError("Enzyme concentration must be a positive number.")
+
+    data['Turnover_Number'] = data['Coefficient'].abs() / enzyme_concentration
+    return data
+
+
 
 
 

@@ -116,3 +116,11 @@ def select_csv_file(csv_files, path):
         except ValueError:
             print("Invalid input. Please enter a number.")
 
+
+def ask_for_enzyme_concentration():
+
+    try:
+        enzyme_c = float(input('Enter the enzyme concentration used in this experiment'))
+        return enzyme_c
+    except ValueError:
+        print('Invalid input, please enter a number.')

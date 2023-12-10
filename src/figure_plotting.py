@@ -1,8 +1,9 @@
 import pandas as pd
 import csv
-from file_handling import find_csv_files, select_csv_file
+from file_handling import find_csv_files, select_csv_file, ask_for_enzyme_concentration
 import seaborn as sns
 import matplotlib.pyplot as plt
+from data_calculations import v_to_tn
 
 
 def plotting_handler(csv_file_path,path):
@@ -58,9 +59,10 @@ def plotting_menu(path):
 
             files = find_csv_files(path)
             initial_rate_path = select_csv_file(files,path)
-
+            enzyme_concentration = ask_for_enzyme_concentration()
             grouped_replicates = group_replicates(initial_rate_path)
-            plot_replicate_coefficients(grouped_replicates)
+            turnover_df = v_to_tn(grouped_replicates,enzyme_concentration)
+            plot_replicate_coefficients(turnover_df)
         else:
             print('Invalid choice, please select a number from the menu.')
 
@@ -152,7 +154,7 @@ def plot_replicate_coefficients(df):
     df['Replicate'] = df['Replicate'].astype('category')
 
     # Calculating mean and standard deviation for each replicate group
-    stats_df = df.groupby('Replicate')['Coefficient'].agg(['mean', 'std']).reset_index()
+    stats_df = df.groupby('Replicate')['Turnover_Number'].agg(['mean', 'std']).reset_index()
     stats_df['Replicate'] = stats_df['Replicate'].apply(lambda x: f'Sample {x}')
 
     # Ensure 'std' is numeric
