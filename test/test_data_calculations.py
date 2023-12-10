@@ -8,7 +8,9 @@ import numpy as np
 import pandas as pd
 from src.data_calculations import fit_linear_regression, baseline_regression, baseline_correction_function, calibration_mean
 
+def setup_df():
 
+    df = pd.DataFrame()
 def test_fit_linear_regression():
     x = [1, 2, 3, 4, 5]
     y = [2, 4, 3, 4, 5]
