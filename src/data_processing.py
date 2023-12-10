@@ -3,7 +3,13 @@ import numpy as np
 import pandas as pd
 
 
+<<<<<<< HEAD
 from data_calculations import baseline_regression, calibration_mean, initial_rate_regression
+=======
+from src.data_calculations import calibration_regression, signal_to_concentration,\
+    baseline_regression, baseline_correction_function, calibration_mean, initial_rate_regression, savitzky_golay_smoothing, exponential_smoothing,\
+    lowess_smoothing, moving_average_smoothing, gaussian_smoothing
+>>>>>>> origin/main
 
 
 class RawPlot:
