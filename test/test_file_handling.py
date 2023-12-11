@@ -1,7 +1,6 @@
 
 import pytest
 import os
-import pandas as pd
 from src.file_handling import ReadData
 import shutil
 

@@ -32,7 +32,6 @@ setup(
         'scipy==1.11.3',
         'seaborn==0.12.2',
         'six==1.16.0',
-        'sklearn==0.0',
         'statsmodels==0.14.0',
         'threadpoolctl==3.1.0',
         'tomli==2.0.1',
