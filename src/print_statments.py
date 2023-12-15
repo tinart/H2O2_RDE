@@ -18,5 +18,10 @@ def print_smoothing_help():
 
     5) Gaussian Filter:
        Applies a Gaussian function to smooth the data, used for blurring and noise reduction.
+       
     """
+
+
     print(help_text)
+
+print('Hello')
