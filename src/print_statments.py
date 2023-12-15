@@ -20,3 +20,8 @@ def print_smoothing_help():
        Applies a Gaussian function to smooth the data, used for blurring and noise reduction.
     """
     print(help_text)
+
+
+def print():
+
+    pass
