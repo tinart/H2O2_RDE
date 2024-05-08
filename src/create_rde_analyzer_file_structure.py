@@ -89,6 +89,7 @@ def main():
 
     rename_file_extension(directory_path, old_extension, new_extension)
     remove_bom_from_csv_files(directory_path)
+    keep_two_columns(directory_path)
 
 if __name__ == "__main__":
     main()
