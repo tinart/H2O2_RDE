@@ -1,6 +1,8 @@
+import os
+
 import pandas as pd
 import csv
-from file_handling import find_csv_files, select_csv_file, ask_for_enzyme_concentration
+from file_handling import find_csv_files, select_csv_file, ask_for_enzyme_concentration, export_selected_data_files
 import seaborn as sns
 import matplotlib.pyplot as plt
 from data_calculations import v_to_tn
@@ -26,11 +28,12 @@ def plotting_menu(path):
         print("2) Plot smoothed data")
         print("3) Plot smoothed data over raw data")
         print("4) Plot intital rates")
-        print("5) Return to Main Menu")
+        print("5) Plot selected files")
+        print("6) Return to Main Menu")
 
         method_choice = input("Enter your choice: ")
 
-        if method_choice == "5":
+        if method_choice == "6":
             break
         elif method_choice == '1':
             raw_csv_file = find_csv_files(path)
@@ -63,8 +66,24 @@ def plotting_menu(path):
             grouped_replicates = group_replicates(initial_rate_path)
             turnover_df = v_to_tn(grouped_replicates,enzyme_concentration)
             plot_replicate_coefficients(turnover_df)
+
+        elif method_choice == '5':
+
+            files = find_csv_files(path)
+            selected_data_files = select_csv_file(files,path)
+            df = select_and_filter_data(selected_data_files)
+            plot_selected_data_seaborn(df, path)
+            export_selected_data_files(df,path)
+
+
+
         else:
             print('Invalid choice, please select a number from the menu.')
+
+
+
+
+
 
 def plot_smoothed_over_raw(raw_data_path, smoothed_data_path):
     # Read the data
@@ -167,4 +186,70 @@ def plot_replicate_coefficients(df):
     plt.xlabel('Replicate Group')
     plt.ylabel('Mean Coefficient')
     plt.show()
+
+
+def select_and_filter_data(selected_data_path):
+    """
+    Function to display unique filenames, prompt user for selection, and return the filtered dataframe.
+
+    :param dataframe: The pandas dataframe containing the data.
+    :return: Filtered pandas dataframe based on user's selection.
+    """
+
+    df = pd.read_csv(selected_data_path)
+
+    # Display unique filenames with indices
+    unique_filenames = df['Filename'].unique()
+    print("Please select from the following filenames by entering their indices (e.g., 1,4,8):")
+    for index, filename in enumerate(unique_filenames, start=1):
+        print(f"{index}: {filename}")
+
+    # Get user input for file selection
+    selected_indices = input("Enter the indices of files you wish to select (comma-separated): ")
+    selected_indices = [int(index) for index in selected_indices.split(',')]
+
+    # Filter the dataframe based on user selection
+    selected_filenames = [unique_filenames[index - 1] for index in selected_indices]
+    filtered_data = df[df['Filename'].isin(selected_filenames)]
+
+
+
+    return filtered_data
+
+
+
+def plot_selected_data_seaborn(filtered_df,path):
+    """
+    Function to plot data from the filtered dataframe using Seaborn.
+
+    :param filtered_df: The pandas dataframe filtered by selected files.
+    """
+    # Ensure the dataframe is not empty
+    if filtered_df.empty:
+        print("No data available to plot.")
+        return
+
+    # Setting up the Seaborn plot
+    plt.figure(figsize=(12, 7))
+    sns.lineplot(data=filtered_df, x='Time (s)', y='[H2O2]', hue='Filename')
+
+    # Adding plot labels and title
+    plt.xlabel('Time (s)')
+    plt.ylabel('[H2O2]')
+    plt.title('H2O2 Concentration Over Time with Seaborn')
+    plt.legend(title='Filename', loc='upper right')
+    plt.grid(True)
+
+
+
+
+    os.chdir(path)
+    plt.savefig('selected_data.pdf', dpi=300)
+    plt.show()
+
+
+
+# Example usage (commented out since this requires the filtered dataframe)
+# plot_selected_data_seaborn(filtered_df)
+
 

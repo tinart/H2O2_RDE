@@ -123,3 +123,8 @@ def ask_for_enzyme_concentration():
         return enzyme_c
     except ValueError:
         print('Invalid input, please enter a number.')
+
+def export_selected_data_files(data,path):
+    formated_date = datetime.now().strftime('%y%m%d')
+    os.chdir(path)
+    data.to_csv(f'{formated_date}_selected_data_plot.csv')
