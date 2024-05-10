@@ -6,7 +6,7 @@ This README contains an overview over the most common usecases of the RDE analys
 
 ### Data file type requirements 
 
-The data files must be in .csv files, that are seperated using (,) to ensure that the file structure is correct for the CLI, use the create_rde_analysis_file_structure.py program. This is used as follow:
+The data files must be in .csv files, that are seperated using (,) to ensure that the file structure is correct for the CLI. In additon, it is important that you only use two columns (Time (s) and Current), these are the first two columns, so make sure that you save your experimental data with time as column one and current as columns 2. The create_rde_analysis_file_structure.py program will create a new folder and files with the _processed tag after the file name. This code is used as follows:
 
 create_rde_analysis_file_structure.py -p 'PATH/TO/DATA' -o '.old_file_ext' -n '.new_file_ext'
 
@@ -19,7 +19,7 @@ This will re-write all your files to be .csv files and remove Byte Order Marks f
 
 ### Starting the program
 
-Perfrom a git clone on this respository and remember the local respository position. If you dont create a PATH VARIABLE to this position, the program can be initialized using:
+Perfrom a git clone on this respository and remember the local respository position. If you dont create a PATH VARIABLE to this position, the program can be initialized by opening the CMD in the same src folder containing all the scripts. Then write the followingsection in your CMD:
 
 python rde_analyzer.py -p "PATH" -c COMMA,SEPERATED,H202,CONCENTRATIONS 
 
