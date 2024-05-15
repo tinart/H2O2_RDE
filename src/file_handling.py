@@ -46,6 +46,11 @@ class ReadData:
         data = self.data_cache[file]
         col1, col2 = self.get_header(file)
         return pd.DataFrame({col1: data[col1], col2: data[col2]})
+    #def get_dataframe(self, file) -> pd.DataFrame:
+        #data = self.data_cache[file]
+        #cols = self.get_header(file)
+        #col1, col2 = cols[0], cols[1]  # Only use the first two columns
+        #return pd.DataFrame({col1: data[col1], col2: data[col2]})
 
     def drop_nan_dataframe(self, file):
         df = self.get_dataframe(file)
