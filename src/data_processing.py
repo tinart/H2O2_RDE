@@ -49,8 +49,10 @@ class BaseLineCorrection:
         column_names = self.get_colnames
         ind = event.ind
 
-        x = np.take(self.df[column_names[0]], ind)
-        y = np.take(self.df[column_names[1]], ind)
+        #x = np.take(self.df[column_names[0]], ind)
+        x = self.df[column_names[0]][ind]
+        #y = np.take(self.df[column_names[1]], ind)
+        y = self.df[column_names[1]][ind]
 
 
 
@@ -112,8 +114,13 @@ class CalibrationPlot:
         col_names = self.get_colnames
         ind = event.ind
 
-        x = np.take(self.df[col_names[0]], ind)
-        y = np.take(self.df[col_names[1]], ind)
+        #x = np.take(self.df[col_names[0]], ind)
+        #y = np.take(self.df[col_names[1]], ind)
+        #x = np.take(self.df[column_names[0]], ind)
+        x = self.df[col_names[0]][ind]
+        #y = np.take(self.df[column_names[1]], ind)
+        y = self.df[col_names[1]][ind]
+
 
         self.raw_data_list[f'{self.n}'] = {'x': x, 'y': y}
         self.n += 1
@@ -204,8 +211,12 @@ class PlotDataStart:
 
         col_names = self.get_colnames()
 
-        x = np.take(self.df[col_names[0]], ind)
-        y = np.take(self.df[col_names[1]], ind)
+        #x = np.take(self.df[col_names[0]], ind)
+        #y = np.take(self.df[col_names[1]], ind)
+        #x = np.take(self.df[column_names[0]], ind)
+        x = self.df[col_names[0]][ind]
+        #y = np.take(self.df[column_names[1]], ind)
+        y = self.df[col_names[1]][ind]
 
         self.start.append([x])
 
@@ -274,8 +285,12 @@ class InitialRateDetermination:
         column_names = self.get_colnames
         ind = event.ind
 
-        x = np.take(self.df['Time (s)'], ind)
-        y = np.take(self.df['[H2O2]'], ind)
+        # x = np.take(self.df['Time (s)'], ind)
+        #y = np.take(self.df['[H2O2]'], ind)
+         #x = np.take(self.df[column_names[0]], ind)
+        x = self.df[column_names[0]][ind]
+        #y = np.take(self.df[column_names[1]], ind)
+        y = self.df[column_names[1]][ind]
 
         self.x.extend(x)
         self.y.extend(y)
