@@ -24,7 +24,7 @@ class ReadData:
         self.dictionary = {}
         self.data_cache = {}  # Cache to store read data for each file
 
-    def create_new_folder(self)-> None:
+    def create_new_folder(self) -> None:
         analyzed_directory = os.path.join(self.path, 'Analyzed')
         os.makedirs(analyzed_directory, exist_ok=True)
 
@@ -47,13 +47,18 @@ class ReadData:
         col1, col2 = self.get_header(file)
         return pd.DataFrame({col1: data[col1], col2: data[col2]})
     #def get_dataframe(self, file) -> pd.DataFrame:
-        #data = self.data_cache[file]
-        #cols = self.get_header(file)
-        #col1, col2 = cols[0], cols[1]  # Only use the first two columns
-        #return pd.DataFrame({col1: data[col1], col2: data[col2]})
+     #   data = self.data_cache[file]
 
-    def drop_nan_dataframe(self, file):
+      #  print(data)
+       # cols = self.get_header(file)
+       # col1, col2 = cols[0], cols[1]  # Only use the first two columns
+       # return pd.DataFrame({col1: data[col1], col2: data[col2]})
+
+    def remove_first_data_points(self, file):
         df = self.get_dataframe(file)
+
+
+
         closest_index = (df['Time (s)'] - 2).abs().idxmin()
         return df.iloc[closest_index:].dropna()
 

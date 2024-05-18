@@ -101,7 +101,7 @@ def analyze(data_path, concentrations):
     analyzed_data_dictionary = {}
     for file in data_reader.file_list:
         try:
-            data_frame = data_reader.drop_nan_dataframe(file)
+            data_frame = data_reader.remove_first_data_points(file)
         except KeyError as e:
             print(f'A {e} occured, please check if your path is correct')
             break

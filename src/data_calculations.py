@@ -47,7 +47,7 @@ def calibration_regression(data):
 
 def signal_to_concentration(regression_parameters, truncated_data):
     a, b, _ = regression_parameters
-    h2o2_y = (truncated_data['y'] - b) / a[0]
+    h2o2_y = (truncated_data['y'] - b) / a
 
     return truncated_data['x'], h2o2_y
 

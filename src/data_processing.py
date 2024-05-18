@@ -13,7 +13,7 @@ from data_calculations import calibration_regression, signal_to_concentration,\
 class RawPlot:
 
     def __init__(self, df):
-        self.df = df
+        self.df = df.reset_index()
 
     @property
     def get_colnames(self) -> list:
@@ -22,21 +22,22 @@ class RawPlot:
     def plot_raw_data(self):
         col_names = self.get_colnames
         data = self.df
+        print(data)
 
 
         plt.plot(
-            data[col_names[0]],
-            data[col_names[1]]
+            data[col_names[1]],
+            data[col_names[2]]
             )
         plt.title('Raw Data')
-        plt.xlabel(col_names[0])
-        plt.ylabel(col_names[1])
+        plt.xlabel(col_names[1])
+        plt.ylabel(col_names[2])
         plt.show()
 
 class BaseLineCorrection:
 
     def __init__(self, df):
-        self.df = df
+        self.df = df.reset_index()
         self.baseline = {}
         self.x = []
         self.y = []
@@ -50,9 +51,9 @@ class BaseLineCorrection:
         ind = event.ind
 
         #x = np.take(self.df[column_names[0]], ind)
-        x = self.df[column_names[0]][ind]
+        x = self.df[column_names[1]][ind]
         #y = np.take(self.df[column_names[1]], ind)
-        y = self.df[column_names[1]][ind]
+        y = self.df[column_names[2]][ind]
 
 
 
@@ -64,7 +65,7 @@ class BaseLineCorrection:
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
-        col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
+        col = ax1.scatter(self.df[col_names[1]], self.df[col_names[2]], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.baseline_correction_picker)
         plt.title('Select baseline values')
@@ -98,7 +99,7 @@ class BaseLineCorrection:
 class CalibrationPlot:
 
     def __init__(self, df, concentrations):
-        self.df = df
+        self.df = df.reset_index()
         self.n = 1
         self.raw_data_list = {}
         self.concentrations = concentrations
@@ -114,12 +115,14 @@ class CalibrationPlot:
         col_names = self.get_colnames
         ind = event.ind
 
+
+
         #x = np.take(self.df[col_names[0]], ind)
         #y = np.take(self.df[col_names[1]], ind)
         #x = np.take(self.df[column_names[0]], ind)
-        x = self.df[col_names[0]][ind]
+        x = self.df[col_names[1]][ind]
         #y = np.take(self.df[column_names[1]], ind)
-        y = self.df[col_names[1]][ind]
+        y = self.df[col_names[2]][ind]
 
 
         self.raw_data_list[f'{self.n}'] = {'x': x, 'y': y}
@@ -131,7 +134,7 @@ class CalibrationPlot:
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
-        col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
+        col = ax1.scatter(self.df[col_names[1]], self.df[col_names[2]], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.calibration_picker)
         plt.title('Pick claibration data plateus')
@@ -146,8 +149,7 @@ class CalibrationPlot:
 
         df = pd.DataFrame()
         data = self.num_to_conc()
-        print('Hello')
-        print(data.keys())
+
 
         for n in self.concentrations:
             x = data[n]['x']
@@ -156,13 +158,14 @@ class CalibrationPlot:
             df1 = pd.DataFrame({'Concentration': n, 'Time': x, 'Signal': y})
             df = pd.concat([df, df1], ignore_index=True)
 
+
         return df
 
     def plot_picked_points(self):
 
         data = self.dict_to_df()
         col_names = self.get_colnames
-        plt.scatter(self.df[col_names[0]], self.df[col_names[1]], s=3)
+        plt.scatter(self.df[col_names[1]], self.df[col_names[2]], s=3)
 
         plt.scatter(data['Time'],data['Signal'], s=5, color='red')
         plt.title('Picked calibration points')
@@ -200,7 +203,7 @@ class CalibrationPlot:
 class PlotDataStart:
 
     def __init__(self, df):
-        self.df =df
+        self.df = df.reset_index()
         self.start = []
 
     def get_colnames(self) -> list:
@@ -211,21 +214,18 @@ class PlotDataStart:
 
         col_names = self.get_colnames()
 
-        #x = np.take(self.df[col_names[0]], ind)
-        #y = np.take(self.df[col_names[1]], ind)
-        #x = np.take(self.df[column_names[0]], ind)
-        x = self.df[col_names[0]][ind]
-        #y = np.take(self.df[column_names[1]], ind)
-        y = self.df[col_names[1]][ind]
 
+
+        x = self.df[col_names[1]][ind]
+        y = self.df[col_names[2]][ind]
         self.start.append([x])
 
     def pick_start_point(self) -> None:
         col_names = self.get_colnames()
-
+        print(self.df)
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
-        col = ax1.scatter(self.df[col_names[0]], self.df[col_names[1]], picker=True)
+        col = ax1.scatter(self.df[col_names[1]], self.df[col_names[2]], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.data_start_picker)
         plt.title('Zoom inn and pick one start point')
@@ -244,7 +244,9 @@ class PlotDataStart:
             start_value = float(start_value)
 
         # Find the index where the column value matches the start value
-        start_indices = np.where(self.df[col_names[0]].astype(float) == start_value)
+        start_indices = np.where(self.df[col_names[1]].astype(float) == start_value)
+        print(self.df)
+        print(start_indices)
 
         # Return the first index found
         if start_indices[0].size > 0:
@@ -260,8 +262,8 @@ class PlotDataStart:
         start = self.get_data_start()
         col_names = self.get_colnames()
 
-        x = self.df[col_names[0]]
-        y = self.df[col_names[1]]
+        x = self.df[col_names[1]]
+        y = self.df[col_names[2]]
 
         plt.plot(x[start:], y[start:])
         plt.show()
@@ -302,12 +304,15 @@ class InitialRateDetermination:
         column_names = self.get_colnames
         ind = event.ind
 
-        # x = np.take(self.df['Time (s)'], ind)
-        #y = np.take(self.df['[H2O2]'], ind)
-         #x = np.take(self.df[column_names[0]], ind)
-        x = self.df[column_names[0]][ind]
-        #y = np.take(self.df[column_names[1]], ind)
-        y = self.df[column_names[1]][ind]
+
+
+
+        x = self.df[column_names[3]][ind]
+
+
+        y = self.df[column_names[5]][ind]
+
+
 
         self.x.extend(x)
         self.y.extend(y)
