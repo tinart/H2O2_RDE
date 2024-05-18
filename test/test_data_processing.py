@@ -14,7 +14,7 @@ def test_RawPlot_init(setup_dataframe):
 
 def test_RawPlot_get_colnames(setup_dataframe):
     raw_plot = RawPlot(setup_dataframe)
-    assert raw_plot.get_colnames == ['Time', 'Value']
+    assert raw_plot.get_colnames == ['index','Time', 'Value']
 
 def test_BaseLineCorrection_init(setup_dataframe):
     baseline_correction = BaseLineCorrection(setup_dataframe)
@@ -22,4 +22,4 @@ def test_BaseLineCorrection_init(setup_dataframe):
 
 def test_BaseLineCorrection_get_colnames(setup_dataframe):
     baseline_correction = BaseLineCorrection(setup_dataframe)
-    assert baseline_correction.get_colnames == ['Time', 'Value']
+    assert baseline_correction.get_colnames == ['index','Time', 'Value']
