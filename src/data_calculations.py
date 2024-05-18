@@ -1,18 +1,26 @@
-
-
 import pandas as pd
 import numpy as np
 from scipy.signal import savgol_filter
 from scipy.ndimage import gaussian_filter1d
 from statsmodels.nonparametric.smoothers_lowess import lowess
-import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression
 
 def fit_linear_regression(x, y):
-    x = sm.add_constant(x)  # Add a constant term to the predictor
-    model = sm.OLS(y, x).fit()  # Fit ordinary least squares regression
-    ypred = model.predict(x)  # Get predicted values
+    x = np.array(x).reshape(-1, 1)
+    y = np.array(y)
 
-    return model.params[1:], model.params[0], ypred
+    # Create and fit the model
+    model = LinearRegression()
+    model.fit(x, y)
+
+    # Extract the coefficients
+    a = model.coef_[0]
+    b = model.intercept_
+
+    # Predict the y values
+    y_pred = model.predict(x)
+
+    return a, b, y_pred
 
 
 def baseline_regression(data, raw_data):

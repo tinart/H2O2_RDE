@@ -235,8 +235,25 @@ class PlotDataStart:
     def get_data_start(self):
         col_names = self.get_colnames()
 
-        start = (np.where(self.df[col_names[0]] == float(self.start[0][0])))
-        return start[0][0]
+        #start = (np.where(self.df[col_names[0]] == float(self.start[0][0])))
+        start_value = self.start[0][0] if isinstance(self.start[0], list) else self.start[0]
+
+        if isinstance(start_value, pd.Series):
+            start_value = float(start_value.iloc[0])
+        else:
+            start_value = float(start_value)
+
+        # Find the index where the column value matches the start value
+        start_indices = np.where(self.df[col_names[0]].astype(float) == start_value)
+
+        # Return the first index found
+        if start_indices[0].size > 0:
+            return start_indices[0][0]
+        else:
+            raise ValueError("Start value not found in the specified column.")
+
+
+        #return start[0][0]
 
     def plot_truncated_data(self):
 
