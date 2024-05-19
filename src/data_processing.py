@@ -269,7 +269,6 @@ class InitialRateDetermination:
         column_names = self.get_colnames
         ind = event.ind
 
-        print(self.df)
 
         x = self.df[column_names[1]][ind]
 

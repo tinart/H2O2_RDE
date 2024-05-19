@@ -122,12 +122,12 @@ def analyze(data_path, concentrations):
                 except Exception as e:
                     print(f"Failed to {description} for file {file}. Error: {e}")
 
-                user_input = input(f"Are you satisfied with {description} for file {file}? (y/n)").strip().lower()
+                user_input = input(f"Are you satisfied with {description} for file {file}? (ENTER/n)").strip().lower()
 
                 if user_input == 'y':
                     break  # Break the while loop and proceed to the next method
                 elif user_input != 'n':
-                    print("Invalid input. Assuming you want to proceed to the next step.")
+                    print("Proceeding to the next step.")
                     break
 
         processor.plot_analyzed_data()
