@@ -45,7 +45,7 @@ class DataProcessing:
         baseline_correction.plot_regression_baseline()
 
     def calibration(self):
-        print(self.concentrations)
+
         calib_plotter = CalibrationPlot(self.bsl_data, self.concentrations)
         calib_plotter.pick_calibration_points()
         self.calibrated_data = calib_plotter.plot_picked_points()
@@ -85,7 +85,7 @@ class DataProcessing:
 
 
 def seaborn_plot(dataframe):
-    sns_plot = sns.lineplot(data=dataframe, x='Time (s)', y='[H2O2]', hue='Filename')
+    sns_plot = sns.lineplot(data=dataframe, x='Time (s)', y='[H2O2]', hue='filename')
     sns_plot.get_figure().savefig('Data.pdf')
 
     plt.show()
@@ -115,7 +115,6 @@ def analyze(data_path, concentrations):
             (processor.truncated_plotter, Exception, "plot truncated data"),
 
         ]:
-
 
             while True:  # Keep looping until the user is satisfied
                 try:
@@ -158,25 +157,26 @@ def determine_initial_rate(df):
 
 def intial_rate_manual(input_filename, dir_path):
     data = pd.read_csv(input_filename)
-    grouped_dataframes = {name: group for name, group in data.groupby('Filename')}
+    grouped_dataframes = {name: group for name, group in data.groupby('filename')}
 
     initial_rates_analysis = pd.DataFrame()
 
     for filename, dataframe in grouped_dataframes.items():
-        print(f'processing{filename}')
-        coef, intecept = determine_initial_rate(df=dataframe)
+        print(f'processing {filename}')
+        coef, intercept = determine_initial_rate(df=dataframe)
 
         coef = coef[0] if isinstance(coef, (list, np.ndarray)) else coef
-        intecept = intecept[0] if isinstance(intecept, (list, np.ndarray)) else intecept
+        intercept = intercept[0] if isinstance(intercept, (list, np.ndarray)) else intercept
 
         analysis = pd.DataFrame({
-            'Filename': filename,
-            'Coefficient': coef,
-            'Intercept': intecept
+            'Filename': [filename],
+            'Coefficient': [coef],
+            'Intercept': [intercept]
         })
         initial_rates_analysis = pd.concat([initial_rates_analysis, analysis], ignore_index=True)
-    os.chdir(path=dir_path)
-    initial_rates_analysis.to_csv('Intial_Rates.csv')
+
+    os.chdir(dir_path)
+    initial_rates_analysis.to_csv('Initial_Rates.csv', index=False)
 
 
 @time_function

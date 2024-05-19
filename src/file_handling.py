@@ -3,6 +3,8 @@ import os
 import shutil
 from datetime import datetime
 import time
+import numpy as np
+
 
 def time_function(func):
     def wrapper(*args, **kwargs):
@@ -28,13 +30,14 @@ class ReadData:
         analyzed_directory = os.path.join(self.path, 'Analyzed')
         os.makedirs(analyzed_directory, exist_ok=True)
 
-    def count_files(self):
+    def count_files(self) -> int:
         return sum(1 for file in os.listdir(self.path) if file.endswith(".csv"))
 
-    def get_filename_list(self):
+    def get_filename_list(self) -> None:
         self.file_list = [file for file in os.listdir(self.path) if file.endswith('.csv')]
 
-    def read_data(self):
+
+    def read_data(self) -> None:
         for file in self.file_list:
             with open(os.path.join(self.path, file), 'r') as csv_file:
                 self.data_cache[file] = pd.read_csv(csv_file, delimiter=',')
@@ -54,7 +57,7 @@ class ReadData:
        # col1, col2 = cols[0], cols[1]  # Only use the first two columns
        # return pd.DataFrame({col1: data[col1], col2: data[col2]})
 
-    def remove_first_data_points(self, file):
+    def remove_first_data_points(self, file) -> pd.DataFrame:
         df = self.get_dataframe(file)
 
 
@@ -62,34 +65,66 @@ class ReadData:
         closest_index = (df['Time (s)'] - 2).abs().idxmin()
         return df.iloc[closest_index:].dropna()
 
-    def create_data_dictionary(self, filename, analyzed_dataframe):
+    def create_data_dictionary(self, filename, analyzed_dataframe) -> None:
         self.dictionary[filename] = {'Time (s)': analyzed_dataframe['Time (s)'], '[H2O2]': analyzed_dataframe['[H2O2]']}
 
-    def move_file_after_analysis(self, file):
+    def move_file_after_analysis(self, file) -> None:
         file_path = os.path.join(self.path, file)
         shutil.move(file_path, os.path.join(self.path, 'Analyzed'))
 
-    def create_longform_dataframe(self,data_dictionary):
+    #def create_longform_dataframe(self,data_dictionary):
+    #    # Create an empty DataFrame
+    #    df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
+    #    formated_date = datetime.now().strftime('%y%m%d')
+#
+    #    # Iterate through the dictionary and append 'a' and 'y' values as rows
+    #    for filename, values in data_dictionary.items():
+    #        if 'Time (s)' in values and '[H2O2]' in values:
+    #            x_values = values['Time (s)']
+    #            y_values = values['[H2O2]']
+    #            temp_df = pd.DataFrame(
+    #                {'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
+    #            df = pd.concat([df, temp_df], ignore_index=True)
+#
+    #    os.chdir(self.path)
+    #    df.to_csv(f'{formated_date}_longform_analyzed_data.csv')
+#
+    #    return df
+
+    def create_longform_dataframe(self, data_dictionary) -> pd.DataFrame:
         # Create an empty DataFrame
-        df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
+
         formated_date = datetime.now().strftime('%y%m%d')
 
-        # Iterate through the dictionary and append 'a' and 'y' values as rows
-        for filename, values in data_dictionary.items():
-            if 'Time (s)' in values and '[H2O2]' in values:
-                x_values = values['Time (s)']
-                y_values = values['[H2O2]']
-                temp_df = pd.DataFrame(
-                    {'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
-                df = pd.concat([df, temp_df], ignore_index=True)
+        long_form_data = []
 
+        for filename, data in data_dictionary.items():
+            time_data = data['Time (s)']
+            h2o2_data = data['[H2O2]']
+            # Create a temporary DataFrame for the current file
+            temp_df = pd.DataFrame({
+                'filename': [filename] * len(time_data),
+                'Time (s)': time_data,
+                '[H2O2]': h2o2_data
+            })
+
+
+            # Append to the long_form_data list
+            long_form_data.append(temp_df)
+
+        # Concatenate all temporary DataFrames into one long-form DataFrame
+        long_form_df = pd.concat(long_form_data, ignore_index=True)
+
+        # Display the DataFrame
         os.chdir(self.path)
-        df.to_csv(f'{formated_date}_longform_analyzed_data.csv')
-
-        return df
 
 
-def find_csv_files(path):
+        long_form_df.to_csv(f'{formated_date}_longform_analyzed_data.csv', index=False)
+
+        return long_form_df
+
+
+def find_csv_files(path) -> list:
     """
     Search the current directory for CSV files and list them as options for the user to select.
 

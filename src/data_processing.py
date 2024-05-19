@@ -2,12 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
-
-from data_calculations import calibration_regression, signal_to_concentration,\
-    baseline_regression, baseline_correction_function, calibration_mean, initial_rate_regression, savitzky_golay_smoothing, exponential_smoothing,\
+from data_calculations import calibration_regression, signal_to_concentration, \
+    baseline_regression, baseline_correction_function, calibration_mean, initial_rate_regression, \
+    savitzky_golay_smoothing, exponential_smoothing, \
     lowess_smoothing, moving_average_smoothing, gaussian_smoothing
-
 
 
 class RawPlot:
@@ -22,17 +20,17 @@ class RawPlot:
     def plot_raw_data(self):
         col_names = self.get_colnames
         data = self.df
-        print(data)
 
 
         plt.plot(
             data[col_names[1]],
             data[col_names[2]]
-            )
+        )
         plt.title('Raw Data')
         plt.xlabel(col_names[1])
         plt.ylabel(col_names[2])
         plt.show()
+
 
 class BaseLineCorrection:
 
@@ -50,12 +48,10 @@ class BaseLineCorrection:
         column_names = self.get_colnames
         ind = event.ind
 
-        #x = np.take(self.df[column_names[0]], ind)
+        # x = np.take(self.df[column_names[0]], ind)
         x = self.df[column_names[1]][ind]
-        #y = np.take(self.df[column_names[1]], ind)
+        # y = np.take(self.df[column_names[1]], ind)
         y = self.df[column_names[2]][ind]
-
-
 
         self.x.extend(x)
         self.y.extend(y)
@@ -73,27 +69,22 @@ class BaseLineCorrection:
         plt.show()
 
     def baseline_data(self) -> list:
-        self.baseline['Values'] = {'x':self.x,'y':self.y}
+        self.baseline['Values'] = {'x': self.x, 'y': self.y}
         return self.baseline
 
     def plot_regression_baseline(self):
-
         data = self.baseline_data()
 
-
-        bsl_coeff, _, ypred = baseline_regression(data,self.df)
+        bsl_coeff, _, ypred = baseline_regression(data, self.df)
 
         x = np.array(data['Values']['x']).reshape(-1, 1)
         y = np.array(data['Values']['y']).reshape(-1, 1)
 
-
-        plt.scatter(self.df['Time (s)'],self.df['WE(1).Current (A)'])
+        plt.scatter(self.df['Time (s)'], self.df['WE(1).Current (A)'])
         plt.scatter(x, y, color='red')
         plt.plot(x, ypred)
         plt.title('Selected baseline regression')
         plt.show()
-
-
 
 
 class CalibrationPlot:
@@ -104,9 +95,6 @@ class CalibrationPlot:
         self.raw_data_list = {}
         self.concentrations = concentrations
 
-
-
-
     @property
     def get_colnames(self) -> list:
         return [col for col in self.df.columns]
@@ -115,19 +103,15 @@ class CalibrationPlot:
         col_names = self.get_colnames
         ind = event.ind
 
-
-
-        #x = np.take(self.df[col_names[0]], ind)
-        #y = np.take(self.df[col_names[1]], ind)
-        #x = np.take(self.df[column_names[0]], ind)
+        # x = np.take(self.df[col_names[0]], ind)
+        # y = np.take(self.df[col_names[1]], ind)
+        # x = np.take(self.df[column_names[0]], ind)
         x = self.df[col_names[1]][ind]
-        #y = np.take(self.df[column_names[1]], ind)
+        # y = np.take(self.df[column_names[1]], ind)
         y = self.df[col_names[2]][ind]
-
 
         self.raw_data_list[f'{self.n}'] = {'x': x, 'y': y}
         self.n += 1
-
 
     def pick_calibration_points(self):
         col_names = self.get_colnames
@@ -145,11 +129,8 @@ class CalibrationPlot:
         return dict(zip(self.concentrations, list(self.raw_data_list.values())))
 
     def dict_to_df(self) -> pd.DataFrame:
-
-
         df = pd.DataFrame()
         data = self.num_to_conc()
-
 
         for n in self.concentrations:
             x = data[n]['x']
@@ -158,31 +139,26 @@ class CalibrationPlot:
             df1 = pd.DataFrame({'Concentration': n, 'Time': x, 'Signal': y})
             df = pd.concat([df, df1], ignore_index=True)
 
-
         return df
 
     def plot_picked_points(self):
-
         data = self.dict_to_df()
         col_names = self.get_colnames
         plt.scatter(self.df[col_names[1]], self.df[col_names[2]], s=3)
 
-        plt.scatter(data['Time'],data['Signal'], s=5, color='red')
+        plt.scatter(data['Time'], data['Signal'], s=5, color='red')
         plt.title('Picked calibration points')
         plt.show()
 
         return data
 
-    def plot_calibration_regression(self,reg_params):
-
+    def plot_calibration_regression(self, reg_params):
         data = self.dict_to_df()
         coef, intercept, ypred = reg_params
         calib_mean = calibration_mean(data_selection=data)
 
-
         x = np.array(calib_mean['Concentration Mean']).reshape((-1, 1))
         y = np.array(calib_mean['Signal Mean']).reshape((-1, 1))
-
 
         plt.scatter(x, y, color='red')
         plt.plot(x, ypred)
@@ -190,14 +166,9 @@ class CalibrationPlot:
         plt.show()
         print(f'Slope:{coef} and intercept:{intercept}')
 
-    def plot_signal_to_concentration(self,x,y):
-
-
-        plt.plot(x,y)
+    def plot_signal_to_concentration(self, x, y):
+        plt.plot(x, y)
         plt.show()
-
-
-
 
 
 class PlotDataStart:
@@ -214,15 +185,13 @@ class PlotDataStart:
 
         col_names = self.get_colnames()
 
-
-
         x = self.df[col_names[1]][ind]
         y = self.df[col_names[2]][ind]
         self.start.append([x])
 
     def pick_start_point(self) -> None:
         col_names = self.get_colnames()
-        print(self.df)
+
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
         col = ax1.scatter(self.df[col_names[1]], self.df[col_names[2]], picker=True)
@@ -235,7 +204,7 @@ class PlotDataStart:
     def get_data_start(self):
         col_names = self.get_colnames()
 
-        #start = (np.where(self.df[col_names[0]] == float(self.start[0][0])))
+        # start = (np.where(self.df[col_names[0]] == float(self.start[0][0])))
         start_value = self.start[0][0] if isinstance(self.start[0], list) else self.start[0]
 
         if isinstance(start_value, pd.Series):
@@ -245,8 +214,7 @@ class PlotDataStart:
 
         # Find the index where the column value matches the start value
         start_indices = np.where(self.df[col_names[1]].astype(float) == start_value)
-        print(self.df)
-        print(start_indices)
+
 
         # Return the first index found
         if start_indices[0].size > 0:
@@ -254,8 +222,7 @@ class PlotDataStart:
         else:
             raise ValueError("Start value not found in the specified column.")
 
-
-        #return start[0][0]
+        # return start[0][0]
 
     def plot_truncated_data(self):
 
@@ -268,31 +235,29 @@ class PlotDataStart:
         plt.plot(x[start:], y[start:])
         plt.show()
 
-        df = pd.DataFrame({'x':x[start:],'y':y[start:]})
+        df = pd.DataFrame({'x': x[start:], 'y': y[start:]})
         return df
+
 
 class InitialRateDetermination:
 
     def __init__(self):
-
         self.df = None
         self.int_rate = {}
         self.x = []
         self.y = []
 
-    def dataframe(self,df):
-
-        #df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
+    def dataframe(self, df):
+        # df = pd.DataFrame(columns=['Filename', 'Time (s)', '[H2O2]'])
 
         # Iterate through the dictionary and append 'a' and 'y' values as rows
-        #for filename, values in dictionary.items():
+        # for filename, values in dictionary.items():
         #    if 'Time (s)' in values and '[H2O2]' in values:
         #        x_values = values['Time (s)']
         #        y_values = values['[H2O2]']
         #        temp_df = pd.DataFrame(
         #            {'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
         #        df = pd.concat([df, temp_df], ignore_index=True)
-
 
         self.df = df
 
@@ -304,19 +269,14 @@ class InitialRateDetermination:
         column_names = self.get_colnames
         ind = event.ind
 
+        print(self.df)
 
+        x = self.df[column_names[1]][ind]
 
-
-        x = self.df[column_names[3]][ind]
-
-
-        y = self.df[column_names[5]][ind]
-
-
+        y = self.df[column_names[2]][ind]
 
         self.x.extend(x)
         self.y.extend(y)
-
 
     def pick_initial_rate_points(self):
         col_names = self.get_colnames
@@ -330,30 +290,22 @@ class InitialRateDetermination:
 
         plt.show()
 
-
     def plot_picked_points(self):
-
-
         col_names = self.get_colnames
         plt.scatter(self.df['Time (s)'], self.df['[H2O2]'], s=3)
 
-        plt.scatter(self.x,self.y, s=5, color='red')
+        plt.scatter(self.x, self.y, s=5, color='red')
         plt.title('Picked calibration points')
         plt.show()
 
-
-
     def initial_rate_data(self) -> list:
-        self.int_rate['Values'] = {'x':self.x,'y':self.y}
-        print(self.int_rate)
+        self.int_rate['Values'] = {'x': self.x, 'y': self.y}
         return self.int_rate
 
     def plot_regression_initial_rate(self):
-
         data = self.initial_rate_data()
 
-
-        bsl_coeff, intercept, ypred = initial_rate_regression(self.x,self.y)
+        bsl_coeff, intercept, ypred = initial_rate_regression(self.x, self.y)
 
         x = np.array(data['Values']['x']).reshape(-1, 1)
         y = np.array(data['Values']['y']).reshape(-1, 1)
@@ -365,7 +317,3 @@ class InitialRateDetermination:
         plt.show()
 
         return bsl_coeff, intercept
-
-
-
-

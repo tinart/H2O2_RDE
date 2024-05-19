@@ -20,6 +20,10 @@ def fit_linear_regression(x, y):
     # Predict the y values
     y_pred = model.predict(x)
 
+    print(type(a))
+    print(type(b))
+    print(type(y_pred))
+
     return a, b, y_pred
 
 

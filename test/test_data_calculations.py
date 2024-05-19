@@ -16,23 +16,22 @@ def check_column_exists(df, column_name):
 
     df = pd.DataFrame()
 def test_fit_linear_regression():
-    x = [1, 2, 3, 4, 5]
-    y = [2, 4, 3, 4, 5]
+    x = [1.1, 2.1, 3.1, 4.1, 5.1]
+    y = [2.1, 4.1, 3.1, 4.1, 5.1]
     coef, intercept, ypred = fit_linear_regression(x, y)
-    #assert isinstance(coef, float)
-    #assert isinstance(intercept, np.ndarray)
-    #assert isinstance(ypred, np.ndarray)
-    pass
+    assert isinstance(coef, float)
+    assert isinstance(intercept, float)
+    assert isinstance(ypred, np.ndarray)
+
 
 
 def test_baseline_regression():
     data = {'Values': {'x': [1, 2, 3, 4, 5], 'y': [2, 4, 3, 4, 5]}}
     coef, intercept, ypred = baseline_regression(data, None)
 
-    pass
-    #assert isinstance(coef, np.ndarray)
-    #assert isinstance(intercept, np.ndarray)
-    #assert isinstance(ypred, np.ndarray)
+    assert isinstance(coef, float)
+    assert isinstance(intercept, float)
+    assert isinstance(ypred, np.ndarray)
 
 
 def test_baseline_correction_function():
