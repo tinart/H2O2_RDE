@@ -259,7 +259,7 @@ class InitialRateDetermination:
         #            {'Filename': [filename] * len(x_values), 'Time (s)': x_values, '[H2O2]': y_values})
         #        df = pd.concat([df, temp_df], ignore_index=True)
 
-        self.df = df
+        self.df = df.reset_index()
 
     @property
     def get_colnames(self) -> list:
@@ -270,10 +270,10 @@ class InitialRateDetermination:
         ind = event.ind
 
 
-        x = self.df[column_names[1]][ind]
+        x = self.df[column_names[2]][ind]
 
-        y = self.df[column_names[2]][ind]
-
+        y = self.df[column_names[3]][ind]
+        
         self.x.extend(x)
         self.y.extend(y)
 
@@ -282,6 +282,7 @@ class InitialRateDetermination:
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
+
         col = ax1.scatter(self.df['Time (s)'], self.df['[H2O2]'], picker=True)
 
         fig.canvas.mpl_connect('pick_event', self.initial_rate_picker)
@@ -303,6 +304,7 @@ class InitialRateDetermination:
 
     def plot_regression_initial_rate(self):
         data = self.initial_rate_data()
+
 
         bsl_coeff, intercept, ypred = initial_rate_regression(self.x, self.y)
 

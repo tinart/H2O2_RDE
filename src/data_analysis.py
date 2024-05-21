@@ -159,11 +159,15 @@ def intial_rate_manual(input_filename, dir_path):
     data = pd.read_csv(input_filename)
     grouped_dataframes = {name: group for name, group in data.groupby('filename')}
 
+
     initial_rates_analysis = pd.DataFrame()
 
     for filename, dataframe in grouped_dataframes.items():
         print(f'processing {filename}')
         coef, intercept = determine_initial_rate(df=dataframe)
+
+
+
 
         coef = coef[0] if isinstance(coef, (list, np.ndarray)) else coef
         intercept = intercept[0] if isinstance(intercept, (list, np.ndarray)) else intercept
