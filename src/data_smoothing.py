@@ -16,7 +16,7 @@ def smoothing_handler(file_name,path):
         df.drop('Unnamed: 0', axis=1, inplace=True)
 
     # Group the DataFrame by 'Filename' and create a dictionary of DataFrames
-    data_by_file = {file: group.reset_index(drop=True) for file, group in df.groupby('Filename')}
+    data_by_file = {file: group.reset_index(drop=True) for file, group in df.groupby('filename')}
     smoothing_menu(data_by_file,path)
 
 
